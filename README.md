@@ -1,6 +1,6 @@
 # About
 
-![Tests](https://github.com/ObKo/stm32-cmake/workflows/Tests/badge.svg)
+![Tests](https://github.com/xanth-io/stm32-cmake/workflows/Tests/badge.svg)
 
 This project is used to develop applications for the STM32 - ST's ARM Cortex-Mx MCUs.
 It uses cmake and GCC, along with newlib (libc), STM32Cube. Supports C0 F0 F1 F2 F3 F4 F7 G0 G4 H7 L0 L1 L4 L5 U0 U5 WB WL device families.
