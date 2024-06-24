@@ -1,0 +1,9 @@
+name: "Install Toolchain"
+description: "Install Toolchain for ARM microcontrolers"
+
+runs:
+  using: composite
+  steps:
+    - name: Install ARM toolchain
+      shell: bash
+      run: sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
