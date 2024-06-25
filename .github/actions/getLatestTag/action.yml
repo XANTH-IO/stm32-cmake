@@ -1,0 +1,39 @@
+name: "Get the latest TAG"
+description: "Get the latest TAG for an input repository"
+
+inputs:
+  repository:
+    description: "Name of the repository"
+    required: true
+outputs:
+  tag:
+    description: "Latest tag for the repository"
+    value: ${{ steps.extract-latest-tag.outputs.TAG }}
+
+runs:
+  using: composite
+  steps:
+    - name: Retrieve Tags Array
+      id: retrieve-tags
+      shell: bash
+      env:
+        REPOSITORY: ${{ inputs.repository }}
+      run: |
+        http_code=$(curl --request GET \
+          --silent --write-out "%{http_code}" \
+          --url "https://api.github.com/repos/$REPOSITORY/tags" \
+          --header "Accept: application/vnd.github+json" \
+          -o body.json )
+        echo "HTTP_CODE=${http_code}" >> $GITHUB_OUTPUT
+        echo "TAGS_ARRAY<<EOF" >> $GITHUB_OUTPUT
+        cat body.json >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Extract latest TAG
+      id: extract-latest-tag
+      if: ${{ steps.retrieve-tags.outputs.HTTP_CODE == 200 }}
+      env:
+        TAGS_ARRAY: ${{ steps.retrieve-tags.outputs.TAGS_ARRAY }}
+      shell: bash
+      run:
+        echo "TAG=$(echo $TAGS_ARRAY | jq '.[0].name' | sed -rn 's@\"@@gp')" >> $GITHUB_OUTPUT

@@ -1,0 +1,18 @@
+name: Unit Test
+
+on: [push]
+
+jobs:
+  UnitTest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: cubeF0
+        uses: './.github/actions/getLatestTag'
+        with:
+          repository: STMicroelectronics/STM32CubeX0
+
+      - name: Display Fetched F0 version
+        run: |
+          echo "Find version ${{ steps.cubeF0.outputs.TAG }}"
