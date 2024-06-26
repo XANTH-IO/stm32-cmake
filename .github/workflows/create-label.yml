@@ -31,5 +31,5 @@ jobs:
           if [ x"$exists" == x"0" ]; then
             gh label create ${{ inputs.labelname }} --color ${{ inputs.color }}
           else
-            echo "Lavel ${{ inputs.labelname }} already exists"
+            echo "Label ${{ inputs.labelname }} already exists"
           fi

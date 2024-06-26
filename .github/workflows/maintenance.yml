@@ -7,6 +7,10 @@ on:
   # schedule:
   #   - cron: '17 4 * * *'
 
+permissions:
+  pull-requests: write
+  issues: write
+
 jobs:
   RetrieveTargetsMatrix:
     uses: ./.github/workflows/create-matrix.yml
