@@ -25,9 +25,11 @@ runs:
           --header "Accept: application/vnd.github+json" \
           -o body.json )
         echo "HTTP_CODE=${http_code}" >> $GITHUB_OUTPUT
-        echo "TAGS_ARRAY<<EOF" >> $GITHUB_OUTPUT
-        cat body.json >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
+        {
+          echo "TAGS_ARRAY<<EOF"
+          cat body.json
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
 
     - name: Extract latest TAG
       id: extract-latest-tag
