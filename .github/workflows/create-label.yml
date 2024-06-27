@@ -1,0 +1,38 @@
+name: LabelCreator
+
+run-name: "Factory for github labels creation"
+
+on:
+  workflow_call:
+    inputs:
+      labelname:
+        required: true
+        type: string
+      color:
+        required: false
+        default: "FF0000"
+        type: string
+
+jobs:
+  CreateLabel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Print Job
+        run: echo "Create ${{ inputs.labelname }} label if doesn't exist"
+
+      - name: Check label exists
+        id: get-existing-label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          label=$(gh label list --search ${{ inputs.labelname }} --json name --jq '.[0].name')
+          echo "LABEL=${label}" >> $GITHUB_OUTPUT
+
+      - name: Create label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !steps.get-existing-label.outputs.LABEL }}
+        run: gh label create ${{ inputs.labelname }} --color ${{ inputs.color }}
