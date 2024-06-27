@@ -3,9 +3,8 @@ name: Maintenance
 run-name: "Nightly maintenance workflow"
 
 on:
-  push
-  # schedule:
-  #   - cron: '17 4 * * *'
+  schedule:
+    - cron: '17 4 * * *'
 
 permissions:
   contents: write

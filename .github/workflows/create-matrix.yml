@@ -22,7 +22,7 @@ jobs:
       - name: Create matrix
         id: create-matrix
         run: |
-          files=$(find cmake/stm32/ -name '*.cmake' -exec sh -c "basename {} | cut -f1 -d '.' | tr '[:lower:]' '[:upper:]'" \;  | sort)
+          files=$(find cmake/stm32/ -name '*.cmake' -exec sh -c "basename {} | cut -f1 -d '.' | tr '[:lower:]' '[:upper:]'" \; | sort)
           deletes="COMMON DEVICES LINKER_LD"
           for del in $deletes; do
             files=(${files[@]/$del})
