@@ -138,25 +138,39 @@ jobs:
               -o serie.json )
             echo "HTTP_CODE=${http_code}" >> $GITHUB_OUTPUT
 
-        - name: Get missing devices list
-          id: get-missings
+        - name: Get existing devices list
+          id: get-devices-list
           if: ${{ steps.get-json.outputs.HTTP_CODE == 200 }}
+          run: |
+            {
+              echo "DEVICES<<EOF"
+              jq -r '.rows[].cells[0].value' serie.json
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            rm serie.json
+
+        - name: Get unsupported (yet) devices list
+          id: get-unsupported-list
+          if: ${{ steps.get-devices-list.outputs.DEVICES }}
+          env:
+            DEVICES: ${{ steps.get-devices-list.outputs.DEVICES }}
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
             family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
-            echo serie.json | jq -r '.rows[].cells[0].value' | while read -r dev; do
+            MISSINGS=${DEVICES}
+            for dev in ${DEVICES}; do
               d=${dev#*STM32}
-              if [ "0" -eq $(sed -rn "s@(\s+)(${d})@found@p" ${family_src_file} | wc -m) ]; then
-                echo "${dev} is missing from ${family_src_file}"
-                echo "- [ ] ${d}" >> missings
+              if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${family_src_file})]; then
+                echo "Device ${dev} is not supported"
               else
-                echo "${dev} found"
+                echo "Device ${dev} is already supported"
+                MISSINGS='${MISSINGS[@]/$dev}'
               fi
             done
-            if [ -f missings ]; then 
+            if [ -n ${MISSINGS} ]; then
               {
                 echo "MISSINGS<<EOF"
-                cat missings
+                echo ${MISSINGS}
                 echo "EOF"
               } >> $GITHUB_OUTPUT
             fi
@@ -177,20 +191,24 @@ jobs:
             fi
 
         - name: Open an issue for missing devices
-          if: ${{ steps.get-missings.outputs.MISSINGS }} && ${{ !steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ steps.get-unsupported-list.outputs.MISSINGS }} && ${{ !steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             LABELS: ${{ matrix.family }},missing-devices
+            MISSINGS: ${{ steps.get-unsupported-list.outputs.MISSINGS }}
           run: |
             echo "Creating issue to report missing devices"
-            BODY="Not supported yet devices list: \n $(cat missings)"
+            BODY="Not supported yet devices list: \n"
+            for device in ${MISSINGS}; do
+              BODY="${BODY}- [ ] ${device}\n"
+            done
             gh issue create \
               --title "${{ matrix.family }} has devices not supported" \
               --label "${LABELS}" \
               --body "$BODY"
 
         - name: Close the issue as there are no missing devices anymore
-          if: ${{ !steps.get-missings.outputs.MISSINGS }} && ${{ steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ !steps.get-unsupported-list.outputs.MISSINGS }} && ${{ steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
