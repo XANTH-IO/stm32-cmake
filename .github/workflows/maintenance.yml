@@ -86,6 +86,13 @@ jobs:
           family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]').cmake
           sed -ri 's@(set\(HAL_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-hal.outputs.TAG }}\4@g' $family_src_file
 
+      - name: Generate token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+        id: generate-token
+
       - name: Create Dependancy update Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
@@ -95,6 +102,7 @@ jobs:
           delete-branch: true
           title: Update ${{ matrix.family }} dependencies
           labels: dependency-update, ${{ matrix.family }}
+          token: ${{ steps.generate-token.outputs.token }}
           body: |
             Update ${{ matrix.family }} to use latest ST Repos
 
