@@ -164,7 +164,7 @@ jobs:
                 echo "Device ${dev} is not supported"
               else
                 echo "Device ${dev} is already supported"
-                MISSINGS='${MISSINGS[@]/$dev}'
+                MISSINGS=${MISSINGS[@]/${dev}}
               fi
             done
             if [ -n ${MISSINGS} ]; then
@@ -191,7 +191,7 @@ jobs:
             fi
 
         - name: Open an issue for missing devices
-          if: ${{ steps.get-unsupported-list.outputs.MISSINGS }} && ${{ !steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ steps.get-unsupported-list.outputs.MISSINGS && ! steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             LABELS: ${{ matrix.family }},missing-devices
@@ -208,10 +208,11 @@ jobs:
               --body "$BODY"
 
         - name: Close the issue as there are no missing devices anymore
-          if: ${{ !steps.get-unsupported-list.outputs.MISSINGS }} && ${{ steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ISSUE: ${{ steps.get-issue-number.outputs.ISSUE }}
           run: |
-            echo "Closing existing issue ${existing}"
-            gh issue close "${existing}" \
+            echo "Closing existing issue ${ISSUE}"
+            gh issue close "${ISSUE}" \
               --comment "${{ matrix.family }} has all its devices supported now"
