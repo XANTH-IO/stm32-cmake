@@ -8,8 +8,9 @@ on:
   #   - cron: '17 4 * * *'
 
 permissions:
-  pull-requests: write
+  contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   RetrieveTargetsMatrix:
@@ -130,10 +131,6 @@ jobs:
             SERIE: ${{ steps.get-ss-id.outputs.SERIE }}
           run: |
             URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/$SERIE.json
-            echo "JSON<<EOF" >> $GITHUB_OUTPUT
-            curl --request GET \
-              --silent --url ${URL} \
-              --header "User-Agent: Firefox/9000" >> data.json
             {
               echo "JSON<<EOF"
               curl --request GET \
