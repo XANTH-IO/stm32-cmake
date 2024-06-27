@@ -157,22 +157,18 @@ jobs:
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
             family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
-            MISSINGS=${DEVICES}
+            MISSINGS=(${DEVICES})
             for dev in ${DEVICES}; do
               d=${dev#*STM32}
               if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${family_src_file}) ]; then
                 echo "Device ${dev} is not supported"
               else
                 echo "Device ${dev} is already supported"
-                MISSINGS=${MISSINGS[@]/${dev}}
+                MISSINGS=(${MISSINGS[@]/${dev}})
               fi
             done
-            if [ -n ${MISSINGS} ]; then
-              {
-                echo "MISSINGS<<EOF"
-                echo ${MISSINGS[@]}
-                echo "EOF"
-              } >> $GITHUB_OUTPUT
+            if [ 0 -ne ${#MISSINGS[@]} ]; then
+              echo "MISSINGS=${MISSINGS[@]}" >> $GITHUB_OUTPUT
             fi
 
         - name: Check for existing Issue
