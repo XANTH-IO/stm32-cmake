@@ -160,7 +160,7 @@ jobs:
             MISSINGS=${DEVICES}
             for dev in ${DEVICES}; do
               d=${dev#*STM32}
-              if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${family_src_file})]; then
+              if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${family_src_file}) ]; then
                 echo "Device ${dev} is not supported"
               else
                 echo "Device ${dev} is already supported"
@@ -170,7 +170,7 @@ jobs:
             if [ -n ${MISSINGS} ]; then
               {
                 echo "MISSINGS<<EOF"
-                echo ${MISSINGS}
+                echo ${MISSINGS[@]}
                 echo "EOF"
               } >> $GITHUB_OUTPUT
             fi
@@ -198,14 +198,16 @@ jobs:
             MISSINGS: ${{ steps.get-unsupported-list.outputs.MISSINGS }}
           run: |
             echo "Creating issue to report missing devices"
-            BODY="Not supported yet devices list: \n"
-            for device in ${MISSINGS}; do
-              BODY="${BODY}- [ ] ${device}\n"
-            done
+            {
+              echo "Not supported yet devices list:"
+              for device in ${MISSINGS[@]}; do
+                echo "- [ ] ${device}"
+              done
+            } >> body.file
             gh issue create \
               --title "${{ matrix.family }} has devices not supported" \
               --label "${LABELS}" \
-              --body "$BODY"
+              --body-file body.file
 
         - name: Close the issue as there are no missing devices anymore
           if: ${{ ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
