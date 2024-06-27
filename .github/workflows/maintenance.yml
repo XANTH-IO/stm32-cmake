@@ -131,23 +131,20 @@ jobs:
             SERIE: ${{ steps.get-ss-id.outputs.SERIE }}
           run: |
             URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/$SERIE.json
-            {
-              echo "JSON<<EOF"
-              curl --request GET \
-                --silent --url ${URL} \
-                --header "User-Agent: Firefox/9000"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
+            http_code=$(curl --request GET \
+              --silent --write-out "%{http_code}" \
+              --url "${URL}" \
+              --header "User-Agent: Firefox/9000" \
+              -o serie.json )
+            echo "HTTP_CODE=${http_code}" >> $GITHUB_OUTPUT
 
         - name: Get missing devices list
           id: get-missings
-          if: ${{ steps.get-json.outputs.JSON }}
-          env:
-            SERIE_JSON: ${{ steps.get-json.outputs.JSON }}
+          if: ${{ steps.get-json.outputs.HTTP_CODE == 200 }}
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
             family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
-            echo $SERIE_JSON | jq -r '.rows[].cells[0].value' | while read -r dev; do
+            echo serie.json | jq -r '.rows[].cells[0].value' | while read -r dev; do
               d=${dev#*STM32}
               if [ "0" -eq $(sed -rn "s@(\s+)(${d})@found@p" ${family_src_file} | wc -m) ]; then
                 echo "${dev} is missing from ${family_src_file}"
@@ -174,7 +171,7 @@ jobs:
               --label "${LABELS}" \
               --state open \
               --json number \
-              --jq '.[0].number)
+              --jq '.[0].number')
             if [ -n ${existing} ]; then
               echo "ISSUE=${existing}" >> $GITHUB_OUTPUT
             fi
