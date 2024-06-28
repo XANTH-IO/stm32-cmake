@@ -2,12 +2,16 @@ set(STM32_WB_TYPES
     WB55xx WB55xx WB35xx WB15xx WB50xx WB30xx WB10xx WB5Mxx
 )
 set(STM32_WB_TYPE_MATCH 
-   "WB55.C" "WB55.[EGY]" "WB35.." "WB15.." "WB50.." "WB30.." "WB10.." "WB5M.."
+    "WB10.." "WB30.C" "WB50.C"
+    "WB15.." "WB35.." "WB55.C" "WB55.[EGY]"
+    "WB5M.."
 )
 
 # this is not full RAM of the chip but only the part allocated to M4 core (SRAM1 in datasheet)
 set(STM32_WB_RAM_SIZES 
-     64K 192K  32K  12K 64K  32K  12K 192K
+     12K  32K  64K
+     12K  32K  64K 192K
+    192K
 )
 
 # WB series need special area for SRAM2 shared with core M0PLUS
@@ -39,6 +43,7 @@ endfunction()
 list(APPEND STM32_ALL_DEVICES
     WB10CC
     WB15CC
+    WB1MMC
     WB30CE
     WB35CC
     WB35CE
