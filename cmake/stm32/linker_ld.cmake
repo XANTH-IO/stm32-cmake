@@ -25,7 +25,8 @@ else()
     set(RAM_SHARE_SECTION "
 MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED\n\
 MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED\n\
-MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED\n\
+.MB_MEM2               : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED AT> FLASH\n\
+_siMB_MEM2 = LOADADDR(.MB_MEM2);\n\
     ")
 endif()
 
