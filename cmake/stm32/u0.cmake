@@ -5,7 +5,7 @@ set(STM32_U0_TYPES
 )
 set(STM32_U0_TYPE_MATCH 
     "U031.[468]"
-    "U073.C"
+    "U073.[8BC]"
     "U083.C"
 )
 set(STM32_U0_RAM_SIZES 
@@ -37,13 +37,24 @@ list(APPEND STM32_ALL_DEVICES
     U031G6
     U031G8
     U031K4
+    U031K6
     U031K8
     U031R6
     U031R8
+    U073C8
+    U073CB
     U073CC
+    U073H8
+    U073HB
     U073HC
+    U073K8
+    U073KB
     U073KC
+    U073M8
+    U073MB
     U073MC
+    U073R8
+    U073RB
     U073RC
     U083CC
     U083HC
