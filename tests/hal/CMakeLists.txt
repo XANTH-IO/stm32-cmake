@@ -34,6 +34,9 @@ foreach(FAMILY ${TEST_FAMILIES})
     endif()
     
     add_executable(hal-test-${FAMILY} ${SOURCES})
+    if(${FAMILY} STREQUAL "MP1")
+        target_compile_definitions(hal-test-${FAMILY} PRIVATE USE_HAL_DRIVER)
+    endif()
     target_compile_definitions(hal-test-${FAMILY} PRIVATE USE_FULL_LL_DRIVER)
     
     foreach(DRIVER ${HAL_DRIVERS_${FAMILY}})
