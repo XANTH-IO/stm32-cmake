@@ -1,10 +1,12 @@
 set(STM32_WB_TYPES 
-    WB55xx WB55xx WB35xx WB15xx WB50xx WB30xx WB10xx WB5Mxx
+    WB10xx WB30xx WB50xx
+    WB15xx WB35xx WB55xx WB55xx 
+    WB1Mxx WB5Mxx
 )
 set(STM32_WB_TYPE_MATCH 
-    "WB10CC" "WB30CE" "WB50CG"
-    "WB15CC" "WB35C." "WB55.C" "WB55.[EGY]"
-    "WB1MMC" "WB5MMG"
+    "WB10.C" "WB30.E" "WB50.G"
+    "WB15.C" "WB35.." "WB55.C" "WB55.[EGY]"
+    "WB1M.C" "WB5M.G"
 )
 
 # this is not full RAM of the chip but only the part allocated to M4 core (SRAM1 in datasheet)
