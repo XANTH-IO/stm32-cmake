@@ -24,7 +24,7 @@ set(STM32_WL_M4_RAM_SIZES
 set(STM32_WL_M0PLUS_RAM_SIZES 
     16K 32K
     32K 32K 32K
-    0K   0K   0K   0K   0K   0K
+     0K  0K  0K  0K  0K  0K
 )
 
 set(STM32_WL_CCRAM_SIZES 
