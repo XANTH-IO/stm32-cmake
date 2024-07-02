@@ -171,7 +171,11 @@ jobs:
                 echo "Device ${dev} is not supported"
               else
                 echo "Device ${dev} is already supported"
-                MISSINGS=(${MISSINGS[@]/${dev}})
+                for i in "${!MISSINGS[@]}""; do
+                  if [[ ${MISSINGS[i]} = ${dev} ]]; then
+                    unset 'MISSINGS[i]'
+                  fi
+                done
               fi
             done
             if [ 0 -ne ${#MISSINGS[@]} ]; then
