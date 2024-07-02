@@ -1,12 +1,27 @@
 set(STM32_U5_TYPES 
+    U535xx U545xx
     U575xx U585xx
+    U595xx U5A5xx
+    U599xx U5A9xx
+    U5F7xx U5G7xx
+    U5F9xx U5G9xx
 )
 set(STM32_U5_TYPE_MATCH 
-   "U575.." "U585.."
+    "U535.." "U545.."
+    "U575.." "U585.."
+    "U595.." "U5A5.."
+    "U599.." "U5A9.."
+    "U5F7.." "U5G7.."
+    "U5F9.." "U5F9.."
 )
 
-set(STM32_U5_RAM_SIZES 
-    768K 768K
+set(STM32_U5_RAM_SIZES
+     256K  256K
+     768K  768K
+    2496K 2496K
+    2496K 2496K
+    3008K 3088K
+    3008K 3088K
 )
 
 stm32_util_create_family_targets(U5)
