@@ -1,15 +1,15 @@
 set(STM32_H5_TYPES 
-    H503xx H562xx H563xx H573xx
+    H503xx H523xx H533xx H562xx H563xx H573xx
 )
 
 set(STM32_H5_TYPE_MATCH 
-    "H503.." "H562.." "H563.." "H573.."
+    "H503.." "H523.." "H533.." "H562.." "H563.." "H573.."
 )
 set(STM32_H5_RAM_SIZES 
-    32K 640K 640K 640K
+    32K 272K 272K 640K 640K 640K
 )
 set(STM32_H5_CCRAM_SIZES 
-    0K  0K  0K  0K
+    0K  0K  0K  0K  0K  0K
 )
 
 stm32_util_create_family_targets(H5)
@@ -27,6 +27,20 @@ list(APPEND STM32_ALL_DEVICES
     H503EB
     H503KB
     H503RB
+    H523CC
+    H523CE
+    H523HE
+    H523RC
+    H523RE
+    H523VC
+    H523VE
+    H523ZC
+    H523ZE
+    H533CE
+    H533HE
+    H533RE
+    H533VE
+    H533ZE
     H562AG
     H562AI
     H562IG
