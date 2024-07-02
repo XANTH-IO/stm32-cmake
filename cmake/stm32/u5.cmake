@@ -12,7 +12,7 @@ set(STM32_U5_TYPE_MATCH
     "U595.." "U5A5.."
     "U599.." "U5A9.."
     "U5F7.." "U5G7.."
-    "U5F9.." "U5F9.."
+    "U5F9.." "U5G9.."
 )
 
 set(STM32_U5_RAM_SIZES
