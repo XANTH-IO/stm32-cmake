@@ -218,7 +218,7 @@ jobs:
               --body-file body.file
 
         - name: Close the issue as there are no missing devices anymore
-          if: ${{ ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ steps.get-devices-list.outputs.DEVICES && ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             ISSUE: ${{ steps.get-issue-number.outputs.ISSUE }}
