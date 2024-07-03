@@ -3,6 +3,7 @@ name: Maintenance
 run-name: "Nightly maintenance workflow"
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '17 4 * * *'
 
