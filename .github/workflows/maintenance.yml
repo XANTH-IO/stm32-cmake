@@ -161,11 +161,11 @@ jobs:
             SERIES=(${SERIE_ST} ${SERIE_FILE})
             for serie in ${SERIES[@]}; do 
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
+              echo "Retrieving ${URL}"
               curl --request GET \
-                --silent --write-out "%{http_code}" \
-                --url "${URL}" \
+                --silent --url "${URL}" \
                 --header "User-Agent: Firefox/9000" \
-                -o ${GITHUB_WORKSPACE}/.series/${serie}.json
+                -o .series/${serie}.json
             done
 
         - name: Get existing devices list
@@ -174,10 +174,10 @@ jobs:
           run: |
             {
               echo "DEVICES<<EOF"
-              jq -r '.rows[].cells[0].value' ${GITHUB_WORKSPACE}/.series/*.json | sort
+              jq -r '.rows[].cells[0].value' .series/*.json | sort
               echo "EOF"
             } >> $GITHUB_OUTPUT
-            rm -rf ${GITHUB_WORKSPACE}/.series
+            rm -rf .series
 
         - name: Get unsupported (yet) devices list
           id: get-unsupported-list
