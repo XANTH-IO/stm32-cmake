@@ -159,6 +159,7 @@ jobs:
             SERIE_FILE: ${{ steps.get-ss-id-from-file.outputs.SERIE }}
           run: |
             SERIES=(${SERIE_ST} ${SERIE_FILE})
+            mkdir -p .series
             for serie in ${SERIES[@]}; do 
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
               echo "Retrieving ${URL}"
