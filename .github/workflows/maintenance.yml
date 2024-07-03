@@ -153,7 +153,6 @@ jobs:
             fi
   
         - name: Retrieve Serie (Family) JSONs
-          id: get-jsons
           if: ${{ steps.get-ss-id-from-st.outputs.SERIE || steps.get-ss-id-from-file.outputs.SERIE }}
           env:
             SERIE_ST: ${{ steps.get-ss-id-from-st.outputs.SERIE }}
