@@ -153,6 +153,8 @@ jobs:
             fi
   
         - name: Retrieve Serie (Family) JSONs
+          id: retrieve-jsons
+          continue-on-error: true
           if: ${{ steps.get-ss-id-from-st.outputs.SERIE || steps.get-ss-id-from-file.outputs.SERIE }}
           env:
             SERIE_ST: ${{ steps.get-ss-id-from-st.outputs.SERIE }}
@@ -164,14 +166,14 @@ jobs:
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
               echo "Retrieving ${URL}"
               curl --request GET \
-                --silent --http1.1 --url "${URL}" \
+                --silent --url "${URL}" \
                 --header "User-Agent: Firefox/9000" \
                 -o .series/${serie}.json
             done
 
         - name: Get existing devices list
           id: get-devices-list
-          if: ${{ steps.get-ss-id-from-st.outputs.SERIE || steps.get-ss-id-from-file.outputs.SERIE }}
+          if: ${{ steps.retrieve-jsons.outcome == 'success' }}
           run: |
             {
               echo "DEVICES<<EOF"
