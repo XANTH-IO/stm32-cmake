@@ -3,6 +3,7 @@ name: Maintenance
 run-name: "Nightly maintenance workflow"
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '17 4 * * *'
 
@@ -118,10 +119,30 @@ jobs:
         - name: Print Job
           run: echo "Looking for possible missing ${{ matrix.family }} devices"
   
-        - name: Get Serie (Family) number from ST website
-          id: get-ss-id
+        - name: Prepare Env variables
+          id: prepare-env
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
+            family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
+            {
+              echo "FAMILY_L=${FAMILY_L}"
+              echo "FAMILY_SRC_FILE=${family_src_file}"
+            } >> $GITHUB_OUTPUT
+
+        - name: Get serie from family file
+          id: get-ss-id-from-file
+          env:
+            FAMILY_SRC_FILE: ${{ steps.prepare-env.outputs.FAMILY_SRC_FILE }}
+          run: |
+            serie=($(sed -rn "s@#\s+SERIE\s+(SS[0-9]{4,})@\1@p" ${FAMILY_SRC_FILE}))
+            echo "SERIE=${serie[@]}" >> $GITHUB_OUTPUT
+
+        - name: Get Serie (Family) number from ST website
+          id: get-ss-id-from-st
+          env:
+            FAMILY_L: ${{ steps.prepare-env.outputs.FAMILY_L }}
+          if: ${{ ! steps.get-ss-id-from-file.outputs.SERIE }}
+          run: |
             URL=https://www.st.com/en/microcontrollers-microprocessors/stm32${FAMILY_L}-series.html
             serie=$(curl --request GET \
               --silent --url ${URL} \
@@ -131,47 +152,48 @@ jobs:
               echo "SERIE=$serie" >> $GITHUB_OUTPUT
             fi
   
-        - name: Retrieve Serie (Family) JSON
-          id: get-json
-          if: ${{ steps.get-ss-id.outputs.SERIE }}
+        - name: Retrieve Serie (Family) JSONs
+          if: ${{ steps.get-ss-id-from-st.outputs.SERIE || steps.get-ss-id-from-file.outputs.SERIE }}
           env:
-            SERIE: ${{ steps.get-ss-id.outputs.SERIE }}
+            SERIE_ST: ${{ steps.get-ss-id-from-st.outputs.SERIE }}
+            SERIE_FILE: ${{ steps.get-ss-id-from-file.outputs.SERIE }}
           run: |
-            URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/$SERIE.json
-            http_code=$(curl --request GET \
-              --silent --write-out "%{http_code}" \
-              --url "${URL}" \
-              --header "User-Agent: Firefox/9000" \
-              -o serie.json )
-            echo "HTTP_CODE=${http_code}" >> $GITHUB_OUTPUT
+            SERIES=(${SERIE_ST} ${SERIE_FILE})
+            for serie in ${SERIES[@]}; do 
+              URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
+              curl --request GET \
+                --silent --write-out "%{http_code}" \
+                --url "${URL}" \
+                --header "User-Agent: Firefox/9000" \
+                -o ${GITHUB_WORKSPACE}/.series/${serie}.json
+            done
 
         - name: Get existing devices list
           id: get-devices-list
-          if: ${{ steps.get-json.outputs.HTTP_CODE == 200 }}
+          if: ${{ steps.get-ss-id-from-st.outputs.SERIE || steps.get-ss-id-from-file.outputs.SERIE }}
           run: |
             {
               echo "DEVICES<<EOF"
-              jq -r '.rows[].cells[0].value' serie.json
+              jq -r '.rows[].cells[0].value' ${GITHUB_WORKSPACE}/.series/*.json | sort
               echo "EOF"
             } >> $GITHUB_OUTPUT
-            rm serie.json
+            rm -rf ${GITHUB_WORKSPACE}/.series
 
         - name: Get unsupported (yet) devices list
           id: get-unsupported-list
           if: ${{ steps.get-devices-list.outputs.DEVICES }}
           env:
+            FAMILY_SRC_FILE: ${{ steps.prepare-env.outputs.FAMILY_SRC_FILE }}
             DEVICES: ${{ steps.get-devices-list.outputs.DEVICES }}
           run: |
-            FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
-            family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
             MISSINGS=(${DEVICES})
             for dev in ${DEVICES}; do
               d=${dev#*STM32}
-              if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${family_src_file}) ]; then
+              if [ -z $(sed -rn "s@(\s+)(${d})@X@p" ${FAMILY_SRC_FILE}) ]; then
                 echo "Device ${dev} is not supported"
               else
                 echo "Device ${dev} is already supported"
-                for i in "${!MISSINGS[@]}""; do
+                for i in "${!MISSINGS[@]}"; do
                   if [[ ${MISSINGS[i]} = ${dev} ]]; then
                     unset 'MISSINGS[i]'
                   fi
@@ -217,7 +239,7 @@ jobs:
               --body-file body.file
 
         - name: Close the issue as there are no missing devices anymore
-          if: ${{ ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
+          if: ${{ steps.get-devices-list.outputs.DEVICES && ! steps.get-unsupported-list.outputs.MISSINGS && steps.get-issue-number.outputs.ISSUE }}
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             ISSUE: ${{ steps.get-issue-number.outputs.ISSUE }}
