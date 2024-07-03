@@ -134,7 +134,7 @@ jobs:
           env:
             FAMILY_SRC_FILE: ${{ steps.prepare-env.outputs.FAMILY_SRC_FILE }}
           run: |
-            serie=($(sed -rn "s@#\s+SERIE\s+(SS[0-9]{4,})@\1@p" ${FAMILY_SRC_FILE}))
+            serie=($(sed -rn "s@#\s+SERIE\s+(SS[0-9]{4,})@\1@p" ${FAMILY_SRC_FILE} | tr -d '\r'))
             echo "SERIE=${serie[@]}" >> $GITHUB_OUTPUT
 
         - name: Get Serie (Family) number from ST website
@@ -160,7 +160,7 @@ jobs:
           run: |
             SERIES=(${SERIE_ST} ${SERIE_FILE})
             mkdir -p .series
-            for serie in ${SERIES[@]}; do 
+            for serie in ${SERIES[@]}; do
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
               echo "Retrieving ${URL}"
               curl --request GET \
