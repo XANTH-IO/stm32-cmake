@@ -143,7 +143,7 @@ message(STATUS "Search for HAL LL drivers: ${HAL_FIND_COMPONENTS_DRIVERS_LL}")
 foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${COMP} COMP_U)
     
-    stm32_extract_info(COMP_U CORE C)
+    stm32_extract_info(COMP_U FAMILY F CORE C)
     if(C)
         set(CORE ${C})
         set(CORE_C "::${CORE}")
@@ -154,7 +154,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
         unset(CORE_U)
     endif()
         
-    set(FAMILY ${CMAKE_MATCH_1})
+    set(FAMILY ${F})
     string(TOLOWER ${FAMILY} FAMILY_L)
 
     if((NOT STM32_HAL_${FAMILY}_PATH) AND (NOT STM32_CUBE_${FAMILY}_PATH) AND (DEFINED ENV{STM32_CUBE_${FAMILY}_PATH}))
