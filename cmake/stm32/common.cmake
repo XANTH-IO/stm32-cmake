@@ -161,7 +161,7 @@ function(stm32_get_chip_info CHIP)
 
     string(TOUPPER ${CHIP} CHIP)
 
-    stm32_extract_info(${CHIP} FAMILY ${STM32_FAMILY} DEVICE ${STM32_DEVICE})
+    stm32_extract_info(${CHIP} FAMILY STM32_FAMILY DEVICE STM32_DEVICE)
 
     if(NOT (${STM32_FAMILY} IN_LIST STM32_SUPPORTED_FAMILIES_SHORT_NAME))
         message(FATAL_ERROR "Unsupported family ${STM32_FAMILY} for device ${CHIP}")

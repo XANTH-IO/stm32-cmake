@@ -43,8 +43,8 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS})
     endif()
 
     # Component is not RTOS component, so check whether it is a family component
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z])?_?(M0PLUS|M4|M7)?.*$" COMP ${COMP})
-    if(CMAKE_MATCH_1)
+    stm32_extract_info(${COMP} FAMILY F)
+    if(F)
         list(APPEND CMSIS_FIND_COMPONENTS_FAMILIES ${COMP})
     endif()
 endforeach()
@@ -113,26 +113,21 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
     string(TOLOWER ${COMP} COMP_L)
     string(TOUPPER ${COMP} COMP)
     
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z])?_?(M0PLUS|M4|M7)?.*$" COMP ${COMP})
-    # CMAKE_MATCH_<n> contains n'th subexpression
-    # CMAKE_MATCH_0 contains full match
+    stm32_extract_info(${COMP} FAMILY F DEVICE STM_DEVICES CORE C)
 
-    if((NOT CMAKE_MATCH_1) AND (NOT CMAKE_MATCH_2))
+    if((NOT F) AND (NOT STM_DEVICES))
         message(FATAL_ERROR "Unknown CMSIS component: ${COMP}")
     endif()
     
-    if(CMAKE_MATCH_2)
-        set(FAMILY ${CMAKE_MATCH_1})
-        set(STM_DEVICES "${CMAKE_MATCH_1}${CMAKE_MATCH_2}")
-        message(TRACE "FindCMSIS: full device name match for COMP ${COMP}, STM_DEVICES is ${STM_DEVICES}")
-    else()
-        set(FAMILY ${CMAKE_MATCH_1})
+    set(FAMILY ${F})
+
+    if(NOT STM_DEVICES)
         stm32_get_devices_by_family(STM_DEVICES FAMILY ${FAMILY})
         message(TRACE "FindCMSIS: family only match for COMP ${COMP}, STM_DEVICES is ${STM_DEVICES}")
     endif()
     
-    if(CMAKE_MATCH_3)
-        set(CORE ${CMAKE_MATCH_3})
+    if(C)
+        set(CORE ${C})
         set(CORE_C "::${CORE}")
         set(CORE_U "_${CORE}")
         set(CORE_Ucm "_c${CORE}")
