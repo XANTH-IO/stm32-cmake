@@ -43,7 +43,7 @@ endfunction()
 foreach(COMP ${HAL_FIND_COMPONENTS})
     string(TOUPPER ${COMP} COMP_U)
     stm32_extract_info(${COMP_U} FAMILY F)
-    if(F) #Matches the family part of the provided STM32<FAMILY>[..] component
+    if(F)
         list(APPEND HAL_FIND_COMPONENTS_FAMILIES ${COMP})
         message(TRACE "FindHAL: append COMP ${COMP} to HAL_FIND_COMPONENTS_FAMILIES")
     else()
@@ -60,10 +60,8 @@ endif()
 foreach(family_comp ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${family_comp} family_comp)
     stm32_extract_info(${family_comp} FAMILY F)
-    if(F) #Matches the family part of the provided STM32<FAMILY>[..] component
-        set(FAMILY ${F})
-        string(TOLOWER ${FAMILY} FAMILY_L)
-    endif()
+    set(FAMILY ${F})
+    string(TOLOWER ${FAMILY} FAMILY_L)
     find_path(HAL_${FAMILY}_PATH
         NAMES Inc/stm32${FAMILY_L}xx_hal.h
         PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver"
@@ -74,15 +72,14 @@ foreach(family_comp ${HAL_FIND_COMPONENTS_FAMILIES})
     else()
         set(HAL_${family_comp}_FOUND TRUE)
     endif()
-    if(CMAKE_MATCH_1) #Matches the family part of the provided STM32<FAMILY>[..] component
-        get_list_hal_drivers(HAL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "hal")
-        get_list_hal_drivers(HAL_EX_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH}  "ex")
-        get_list_hal_drivers(HAL_LL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "ll")
-        list(APPEND HAL_DRIVERS ${HAL_DRIVERS_${FAMILY}})
-        list(APPEND HAL_LL_DRIVERS ${HAL_LL_DRIVERS_${FAMILY}})
-    else()
-    endif()
+
+    get_list_hal_drivers(HAL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "hal")
+    get_list_hal_drivers(HAL_EX_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH}  "ex")
+    get_list_hal_drivers(HAL_LL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "ll")
+    list(APPEND HAL_DRIVERS ${HAL_DRIVERS_${FAMILY}})
+    list(APPEND HAL_LL_DRIVERS ${HAL_LL_DRIVERS_${FAMILY}})
 endforeach()
+
 list(REMOVE_DUPLICATES HAL_DRIVERS)
 list(REMOVE_DUPLICATES HAL_LL_DRIVERS)
 
