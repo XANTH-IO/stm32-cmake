@@ -216,7 +216,6 @@ else()
         set(FAMILY F)
 
         if(NOT STM_DEVICES)
-            set(FAMILY ${CMAKE_MATCH_1})
             stm32_get_devices_by_family(STM_DEVICES FAMILY ${FAMILY})
         endif()
         

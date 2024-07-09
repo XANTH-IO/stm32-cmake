@@ -141,6 +141,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${COMP} COMP_U)
     
     stm32_extract_info(COMP_U FAMILY F CORE C)
+    message(STATUS "Extracted ${F} and ${C} from ${COMP_U}")
     if(C)
         set(CORE ${C})
         set(CORE_C "::${CORE}")
