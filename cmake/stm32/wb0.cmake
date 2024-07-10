@@ -11,8 +11,7 @@ set(STM32_WB0_RAM_SIZES
 )
 
 set(STM32_WB0_CCRAM_SIZES 
-     0K
-     0K
+    0K 0K 0K 0K
 )
 
 stm32_util_create_family_targets(WB0)
