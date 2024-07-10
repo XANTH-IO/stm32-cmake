@@ -140,9 +140,8 @@ message(STATUS "Search for HAL LL drivers: ${HAL_FIND_COMPONENTS_DRIVERS_LL}")
 foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${COMP} COMP_U)
     
-    unset(C)
-    stm32_extract_info(COMP_U FAMILY F CORE C)
-    message(STATUS "Extracted ${F} and ${C} from ${COMP_U}")
+    stm32_extract_info(${COMP_U} FAMILY F CORE C)
+
     if(C)
         set(CORE ${C})
         set(CORE_C "::${CORE}")

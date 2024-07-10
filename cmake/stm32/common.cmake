@@ -11,7 +11,7 @@ function(stm32_extract_info identifier)
     set(FLASH_SIZE ${CMAKE_MATCH_5})
     set(CORE ${CMAKE_MATCH_6})
 
-    message(STATUS "Parsed ${identifier} and got F ${FAMILY} S ${SUB_FAMILY} P ${PIN_COUNT} R ${FLASH_SIZE} C ${CORE}")
+    # message(STATUS "Parsed ${identifier} and got F ${FAMILY} S ${SUB_FAMILY} P ${PIN_COUNT} R ${FLASH_SIZE} C ${CORE}")
 
     if (INFO_FAMILY AND FAMILY)
         set(${INFO_FAMILY} ${FAMILY} PARENT_SCOPE)
