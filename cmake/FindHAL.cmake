@@ -63,8 +63,8 @@ foreach(family_comp ${HAL_FIND_COMPONENTS_FAMILIES})
     set(FAMILY ${F})
     string(TOLOWER ${FAMILY} FAMILY_L)
     find_path(HAL_${FAMILY}_PATH
-        NAMES Inc/stm32${FAMILY_L}xx_hal.h
-        PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver"
+        NAMES Inc/stm32${FAMILY_L}xx_hal.h Inc/stm32${FAMILY_L}x_hal.h
+        PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}x_HAL_Driver"
         NO_DEFAULT_PATH
         )
     if(NOT HAL_${FAMILY}_PATH)
@@ -184,8 +184,8 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     endif()
 
     find_path(HAL_${FAMILY}_PATH
-        NAMES Inc/stm32${FAMILY_L}xx_hal.h
-        PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver"
+        NAMES Inc/stm32${FAMILY_L}xx_hal.h Inc/stm32${FAMILY_L}x_hal.h
+        PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}x_HAL_Driver"
         NO_DEFAULT_PATH
     )
     if (NOT HAL_${FAMILY}_PATH)
@@ -194,12 +194,12 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     endif()
     
     find_path(HAL_${FAMILY}${CORE_U}_INCLUDE
-        NAMES stm32${FAMILY_L}xx_hal.h
+        NAMES stm32${FAMILY_L}xx_hal.h stm32${FAMILY_L}x_hal.h
         PATHS "${HAL_${FAMILY}_PATH}/Inc"
         NO_DEFAULT_PATH
     )
     find_file(HAL_${FAMILY}${CORE_U}_SOURCE
-        NAMES stm32${FAMILY_L}xx_hal.c
+        NAMES stm32${FAMILY_L}xx_hal.c stm32${FAMILY_L}x_hal.c
         PATHS "${HAL_${FAMILY}_PATH}/Src"
         NO_DEFAULT_PATH
     )
@@ -229,7 +229,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
         endif()
         
         find_file(HAL_${FAMILY}${CORE_U}_${DRV}_SOURCE
-            NAMES stm32${FAMILY_L}xx_hal_${DRV_L}.c
+            NAMES stm32${FAMILY_L}xx_hal_${DRV_L}.c stm32${FAMILY_L}x_hal_${DRV_L}.c
             PATHS "${HAL_${FAMILY}_PATH}/Src"
             NO_DEFAULT_PATH
         )
@@ -250,7 +250,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
                 
         if(HAL_${FAMILY}${CORE_U}_${DRV}_SOURCE AND (${DRV_L} IN_LIST HAL_EX_DRIVERS_${FAMILY}))
             find_file(HAL_${FAMILY}${CORE_U}_${DRV}_EX_SOURCE
-                NAMES stm32${FAMILY_L}xx_hal_${DRV_L}_ex.c
+                NAMES stm32${FAMILY_L}xx_hal_${DRV_L}_ex.c stm32${FAMILY_L}x_hal_${DRV_L}_ex.c
                 PATHS "${HAL_${FAMILY}_PATH}/Src"
                 NO_DEFAULT_PATH
             )
@@ -278,7 +278,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
         endif()
         
         find_file(HAL_${FAMILY}${CORE_U}_${DRV}_LL_SOURCE
-            NAMES stm32${FAMILY_L}xx_ll_${DRV_L}.c
+            NAMES stm32${FAMILY_L}xx_ll_${DRV_L}.c stm32${FAMILY_L}x_ll_${DRV_L}.c
             PATHS "${HAL_${FAMILY}_PATH}/Src"
             NO_DEFAULT_PATH
         )

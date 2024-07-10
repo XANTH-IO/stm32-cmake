@@ -166,8 +166,8 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
 	
     # search for Include/stm32[XX]xx.h
     find_path(CMSIS_${FAMILY}${CORE_U}_PATH
-        NAMES Include/stm32${FAMILY_L}xx.h
-        PATHS "${STM32_CMSIS_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/CMSIS/Device/ST/STM32${FAMILY}xx"
+        NAMES Include/stm32${FAMILY_L}xx.h Include/stm32${FAMILY_L}x.h
+        PATHS "${STM32_CMSIS_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/CMSIS/Device/ST/STM32${FAMILY}xx" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/CMSIS/Device/ST/STM32${FAMILY}X"
         NO_DEFAULT_PATH
     )
     if (NOT CMSIS_${FAMILY}${CORE_U}_PATH)
@@ -206,7 +206,7 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
 
     # search for system_stm32[XX]xx.c
     find_file(CMSIS_${FAMILY}${CORE_U}_SYSTEM
-        NAMES system_stm32${FAMILY_L}xx.c
+        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c
         PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates"
         NO_DEFAULT_PATH
     )
