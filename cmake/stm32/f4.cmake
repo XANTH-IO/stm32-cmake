@@ -28,7 +28,7 @@ target_link_options(STM32::F4 INTERFACE
     -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_F4_DEVICES
     F401CB
     F401CC
     F401CD
@@ -179,6 +179,7 @@ list(APPEND STM32_ALL_DEVICES
     F479ZG
     F479ZI
 )
+list(APPEND STM32_ALL_DEVICES STM32_F4_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32F4
