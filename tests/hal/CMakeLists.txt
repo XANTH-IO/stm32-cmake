@@ -23,7 +23,7 @@ set(SOURCES main.c)
 
 foreach(FAMILY ${TEST_FAMILIES})
     stm32_get_devices_by_family(STM_DEVICES FAMILY ${FAMILY})
-    list(GET STM_DEVICES 0 DEVICE)
+    list(GET STM_DEVICES -1 DEVICE)
     stm32_get_cores(CORES FAMILY ${FAMILY} DEVICE ${DEVICE})
     
     if(CORES)
