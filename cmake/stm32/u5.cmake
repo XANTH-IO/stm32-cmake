@@ -33,7 +33,7 @@ target_link_options(STM32::U5 INTERFACE
     -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_U5_DEVICES
     U535CB
     U535CC
     U535CE
@@ -109,6 +109,7 @@ list(APPEND STM32_ALL_DEVICES
     U5G9VJ
     U5G9ZJ
 )
+list(APPEND STM32_ALL_DEVICES STM32_U5_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32U5

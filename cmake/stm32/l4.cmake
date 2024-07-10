@@ -39,7 +39,7 @@ target_link_options(STM32::L4 INTERFACE
     -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_L4_DEVICES
     L412C8
     L412CB
     L412K8
@@ -180,6 +180,7 @@ list(APPEND STM32_ALL_DEVICES
     L4S9VI
     L4S9ZI
 )
+list(APPEND STM32_ALL_DEVICES STM32_L4_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32L4

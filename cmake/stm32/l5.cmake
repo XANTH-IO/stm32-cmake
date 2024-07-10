@@ -21,7 +21,7 @@ target_link_options(STM32::L5 INTERFACE
     -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_L5_DEVICES
     L552CC
     L552CE
     L552ME
@@ -40,6 +40,7 @@ list(APPEND STM32_ALL_DEVICES
     L562VE
     L562ZE
 )
+list(APPEND STM32_ALL_DEVICES STM32_L5_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32L5

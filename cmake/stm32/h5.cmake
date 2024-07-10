@@ -22,7 +22,7 @@ target_link_options(STM32::H5 INTERFACE
     -mcpu=cortex-m33 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -mthumb
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_H5_DEVICES
     H503CB
     H503EB
     H503KB
@@ -69,6 +69,7 @@ list(APPEND STM32_ALL_DEVICES
     H573VI
     H573ZI
 )
+list(APPEND STM32_ALL_DEVICES STM32_H5_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32H5

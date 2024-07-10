@@ -24,7 +24,7 @@ target_link_options(STM32::G4 INTERFACE
     -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_G4_DEVICES
     G431C6
     G431C8
     G431CB
@@ -120,6 +120,7 @@ list(APPEND STM32_ALL_DEVICES
     G4A1VE
     GBK1CB
 )
+list(APPEND STM32_ALL_DEVICES STM32_G4_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32G4
