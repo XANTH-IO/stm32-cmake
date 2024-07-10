@@ -42,8 +42,8 @@ endfunction()
 # Step 1 : Checking all the requested families
 foreach(COMP ${HAL_FIND_COMPONENTS})
     string(TOUPPER ${COMP} COMP_U)
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z])?_?(M0PLUS|M4|M7)?.*$" COMP_U ${COMP_U})
-    if(CMAKE_MATCH_1) #Matches the family part of the provided STM32<FAMILY>[..] component
+    stm32_extract_info(${COMP_U} FAMILY F)
+    if(F)
         list(APPEND HAL_FIND_COMPONENTS_FAMILIES ${COMP})
         message(TRACE "FindHAL: append COMP ${COMP} to HAL_FIND_COMPONENTS_FAMILIES")
     else()
@@ -59,11 +59,9 @@ endif()
 # Step 2 : Generating all the valid drivers from requested families
 foreach(family_comp ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${family_comp} family_comp)
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z])?_?(M0PLUS|M4|M7)?.*$" family_comp ${family_comp})
-    if(CMAKE_MATCH_1) #Matches the family part of the provided STM32<FAMILY>[..] component
-        set(FAMILY ${CMAKE_MATCH_1})
-        string(TOLOWER ${FAMILY} FAMILY_L)
-    endif()
+    stm32_extract_info(${family_comp} FAMILY F)
+    set(FAMILY ${F})
+    string(TOLOWER ${FAMILY} FAMILY_L)
     find_path(HAL_${FAMILY}_PATH
         NAMES Inc/stm32${FAMILY_L}xx_hal.h
         PATHS "${STM32_HAL_${FAMILY}_PATH}" "${STM32_CUBE_${FAMILY}_PATH}/Drivers/STM32${FAMILY}xx_HAL_Driver"
@@ -74,15 +72,14 @@ foreach(family_comp ${HAL_FIND_COMPONENTS_FAMILIES})
     else()
         set(HAL_${family_comp}_FOUND TRUE)
     endif()
-    if(CMAKE_MATCH_1) #Matches the family part of the provided STM32<FAMILY>[..] component
-        get_list_hal_drivers(HAL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "hal")
-        get_list_hal_drivers(HAL_EX_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH}  "ex")
-        get_list_hal_drivers(HAL_LL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "ll")
-        list(APPEND HAL_DRIVERS ${HAL_DRIVERS_${FAMILY}})
-        list(APPEND HAL_LL_DRIVERS ${HAL_LL_DRIVERS_${FAMILY}})
-    else()
-    endif()
+
+    get_list_hal_drivers(HAL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "hal")
+    get_list_hal_drivers(HAL_EX_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH}  "ex")
+    get_list_hal_drivers(HAL_LL_DRIVERS_${FAMILY} ${HAL_${FAMILY}_PATH} "ll")
+    list(APPEND HAL_DRIVERS ${HAL_DRIVERS_${FAMILY}})
+    list(APPEND HAL_LL_DRIVERS ${HAL_LL_DRIVERS_${FAMILY}})
 endforeach()
+
 list(REMOVE_DUPLICATES HAL_DRIVERS)
 list(REMOVE_DUPLICATES HAL_LL_DRIVERS)
 
@@ -143,9 +140,10 @@ message(STATUS "Search for HAL LL drivers: ${HAL_FIND_COMPONENTS_DRIVERS_LL}")
 foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
     string(TOUPPER ${COMP} COMP_U)
     
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z])?_?(M0PLUS|M4|M7)?.*$" COMP_U ${COMP_U})    
-    if(CMAKE_MATCH_3)
-        set(CORE ${CMAKE_MATCH_3})
+    stm32_extract_info(${COMP_U} FAMILY F CORE C)
+
+    if(C)
+        set(CORE ${C})
         set(CORE_C "::${CORE}")
         set(CORE_U "_${CORE}")
     else()
@@ -154,7 +152,7 @@ foreach(COMP ${HAL_FIND_COMPONENTS_FAMILIES})
         unset(CORE_U)
     endif()
         
-    set(FAMILY ${CMAKE_MATCH_1})
+    set(FAMILY ${F})
     string(TOLOWER ${FAMILY} FAMILY_L)
 
     if((NOT STM32_HAL_${FAMILY}_PATH) AND (NOT STM32_CUBE_${FAMILY}_PATH) AND (DEFINED ENV{STM32_CUBE_${FAMILY}_PATH}))

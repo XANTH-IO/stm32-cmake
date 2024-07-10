@@ -65,7 +65,6 @@ include(stm32/wb0)
 include(stm32/wl)
 include(stm32/mp1)
 
-
 # Store a list of devices into a given STM_DEVICES list.
 # You can also specify multiple device families. Examples:
 # Get list of all devices for H7 family: stm32_get_devices_by_family(STM_DEVICES FAMILY H7)

@@ -1,9 +1,37 @@
+function(stm32_extract_info identifier)
+    set(ARG_OPTIONS "")
+    set(ARG_SINGLE FAMILY DEVICE FLASH_CODE CORE)
+    set(ARG_MULTIPLE "")
+    cmake_parse_arguments(PARSE_ARGV 1 INFO "${ARG_OPTIONS}" "${ARG_SINGLE}" "${ARG_MULTIPLE}")
+
+    string(REGEX MATCH "^(STM32)?([CFGHLU][0123457]|MP[12]|WL|WB[0A]?)([0-9A-Z][0-9M]?)?([A-Z135])?([3468ABCDEFGHIJYZ])?_?(M0PLUS|M4|M7)?.*$" ID ${identifier})
+    set(FAMILY ${CMAKE_MATCH_2})
+    set(SUB_FAMILY ${CMAKE_MATCH_3})
+    set(PIN_COUNT ${CMAKE_MATCH_4})
+    set(FLASH_SIZE ${CMAKE_MATCH_5})
+    set(CORE ${CMAKE_MATCH_6})
+
+    # message(STATUS "Parsed ${identifier} and got F ${FAMILY} S ${SUB_FAMILY} P ${PIN_COUNT} R ${FLASH_SIZE} C ${CORE}")
+
+    if (INFO_FAMILY AND FAMILY)
+        set(${INFO_FAMILY} ${FAMILY} PARENT_SCOPE)
+    endif()
+    if (INFO_DEVICE AND FAMILY AND SUB_FAMILY AND PIN_COUNT AND FLASH_SIZE)
+        set(${INFO_DEVICE} ${FAMILY}${SUB_FAMILY}${PIN_COUNT}${FLASH_SIZE} PARENT_SCOPE)
+    endif()
+    if (INFO_FLASH_CODE AND FLASH_SIZE)
+        set(${INFO_FLASH_CODE} ${FLASH_SIZE} PARENT_SCOPE)
+    endif()
+    if (INFO_CORE AND CORE)
+        set(${INFO_CORE} ${CORE} PARENT_SCOPE)
+    endif()
+endfunction()
+
 include(stm32/devices)
 
-foreach(FAMILY ${STM32_SUPPORTED_FAMILIES_LONG_NAME})
-    # append short names (F0, F1, H7_M4, ...) to STM32_SUPPORTED_FAMILIES_SHORT_NAME
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])_?(M0PLUS|M4|M7)?" FAMILY ${FAMILY})
-    list(APPEND STM32_SUPPORTED_FAMILIES_SHORT_NAME ${CMAKE_MATCH_1})
+foreach(FAMILY_LN ${STM32_SUPPORTED_FAMILIES_LONG_NAME})
+    stm32_extract_info(${FAMILY_LN} FAMILY FAMILY_SHORT)
+    list(APPEND STM32_SUPPORTED_FAMILIES_SHORT_NAME ${FAMILY_SHORT})
 endforeach()
 list(REMOVE_DUPLICATES STM32_SUPPORTED_FAMILIES_SHORT_NAME)
 
@@ -135,15 +163,7 @@ function(stm32_get_chip_info CHIP)
 
     string(TOUPPER ${CHIP} CHIP)
 
-    string(REGEX MATCH "^STM32([CFGHLMUW]P?[0-9BL])([0-9A-Z][0-9M][A-Z][0-9A-Z]).*$" CHIP ${CHIP})
-
-    if((NOT CMAKE_MATCH_1) OR (NOT CMAKE_MATCH_2))
-        message(FATAL_ERROR "Unknown chip ${CHIP}")
-    endif()
-
-    set(STM32_FAMILY ${CMAKE_MATCH_1})
-    set(STM32_DEVICE "${CMAKE_MATCH_1}${CMAKE_MATCH_2}")
-
+    stm32_extract_info(${CHIP} FAMILY STM32_FAMILY DEVICE STM32_DEVICE)
 
     if(NOT (${STM32_FAMILY} IN_LIST STM32_SUPPORTED_FAMILIES_SHORT_NAME))
         message(FATAL_ERROR "Unsupported family ${STM32_FAMILY} for device ${CHIP}")
@@ -221,7 +241,7 @@ function(stm32_get_memory_info)
         stm32_get_chip_type(${INFO_FAMILY} ${INFO_DEVICE} INFO_TYPE)
     endif()
 
-    string(REGEX REPLACE "^[CFGHLMUW]P?[0-9BL][0-9A-Z][0-9M].([3468ABCDEFGHIJYZ])$" "\\1" SIZE_CODE ${INFO_DEVICE})
+    stm32_extract_info(${INFO_DEVICE} FLASH_CODE SIZE_CODE)
 
     if(SIZE_CODE STREQUAL "3")
         set(FLASH "8K")
@@ -254,8 +274,7 @@ function(stm32_get_memory_info)
     elseif(SIZE_CODE STREQUAL "Z")
         set(FLASH "192K")
     else()
-        set(FLASH "16K")
-        message(WARNING "Unknow flash size for device ${DEVICE}. Set to ${FLASH}")
+        message(FATAL_ERROR "Unknow flash size for device ${DEVICE}.")
     endif()
 
     list(FIND STM32_${INFO_FAMILY}_TYPES ${INFO_TYPE} TYPE_INDEX)
