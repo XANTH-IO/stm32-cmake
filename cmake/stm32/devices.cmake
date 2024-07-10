@@ -185,7 +185,7 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
         set(STM32_USE_CMSIS_FROM_CUBE_${FAMILY} ON)
     else()
         if(NOT CMSIS_${FAMILY}_URL)
-            set(CMSIS_${FAMILY}_URL https://github.com/STMicroelectronics/cmsis_device_${FAMILY_L}/
+            set(CMSIS_${FAMILY}_URL https://github.com/STMicroelectronics/cmsis_device_${FAMILY_L}/)
         endif()
 
         FetchContent_Declare(
@@ -200,7 +200,7 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
         set(STM32_USE_HAL_FROM_CUBE_${FAMILY} ON)
     else()
         if(NOT HAL_${FAMILY}_URL)
-            set(HAL_${FAMILY}_URL https://github.com/STMicroelectronics/stm32${FAMILY_L}xx_hal_driver/
+            set(HAL_${FAMILY}_URL https://github.com/STMicroelectronics/stm32${FAMILY_L}xx_hal_driver/)
         endif()
 
         FetchContent_Declare(
