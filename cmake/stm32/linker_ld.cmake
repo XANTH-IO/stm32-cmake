@@ -155,5 +155,3 @@ ${RAM_SHARE_SECTION}\n\
 }"
 )
 file(WRITE "${LINKER_SCRIPT}" "${SCRIPT_TEXT}")
-
-

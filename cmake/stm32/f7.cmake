@@ -24,7 +24,7 @@ target_link_options(STM32::F7 INTERFACE
     -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
-list(APPEND STM32_ALL_DEVICES
+set(STM32_F7_DEVICES
     F722IC
     F722IE
     F722RC
@@ -112,6 +112,7 @@ list(APPEND STM32_ALL_DEVICES
     F779II
     F779NI
 )
+list(APPEND STM32_ALL_DEVICES STM32_F7_DEVICES)
 
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32F7

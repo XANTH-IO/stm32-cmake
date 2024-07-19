@@ -61,6 +61,7 @@ include(stm32/l5)
 include(stm32/u0)
 include(stm32/u5)
 include(stm32/wb)
+include(stm32/wb0)
 include(stm32/wl)
 include(stm32/mp1)
 
@@ -82,10 +83,9 @@ function(stm32_get_devices_by_family STM_DEVICES)
     if(ARG_FAMILY)
         set(RESULTING_DEV_LIST "")
         foreach(FAMILY ${ARG_FAMILY})
-            set(STM_DEVICE_LIST ${STM32_ALL_DEVICES})
-            list(FILTER STM_DEVICE_LIST INCLUDE REGEX "^${FAMILY}")
-            list(APPEND RESULTING_DEV_LIST ${STM_DEVICE_LIST})
-            if(NOT STM_DEVICE_LIST)
+
+            list(APPEND RESULTING_DEV_LIST ${STM32_${FAMILY}_DEVICES})
+            if(NOT STM32_${FAMILY}_DEVICES)
                 message(WARNING "No devices found for given family ${FAMILY}")
             endif()
         endforeach()
@@ -158,8 +158,6 @@ macro(stm32_pretty_print_dev_list FAMILIES STM_DEVICES)
    endif()
 endmacro()
 
-
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -172,9 +170,13 @@ FetchContent_Declare(
 foreach(FAMILY ${STM32_FETCH_FAMILIES})
     string(TOLOWER ${FAMILY} FAMILY_L)
 	
+    if(NOT CUBE_${FAMILY}_URL)
+        set(CUBE_${FAMILY}_URL https://github.com/STMicroelectronics/STM32Cube${FAMILY}/)
+    endif()
+
 	FetchContent_Declare(
 		STM32Cube${FAMILY}
-		GIT_REPOSITORY https://github.com/STMicroelectronics/STM32Cube${FAMILY}/
+		GIT_REPOSITORY ${CUBE_${FAMILY}_URL}
 		GIT_TAG        ${CUBE_${FAMILY}_VERSION}
 		GIT_PROGRESS   TRUE
 	)
@@ -182,9 +184,13 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
     if(CMSIS_${FAMILY}_VERSION STREQUAL cube)
         set(STM32_USE_CMSIS_FROM_CUBE_${FAMILY} ON)
     else()
+        if(NOT CMSIS_${FAMILY}_URL)
+            set(CMSIS_${FAMILY}_URL https://github.com/STMicroelectronics/cmsis_device_${FAMILY_L}/)
+        endif()
+
         FetchContent_Declare(
             STM32-CMSIS-${FAMILY}
-            GIT_REPOSITORY https://github.com/STMicroelectronics/cmsis_device_${FAMILY_L}/
+            GIT_REPOSITORY ${CMSIS_${FAMILY}_URL}
             GIT_TAG        ${CMSIS_${FAMILY}_VERSION}
             GIT_PROGRESS   TRUE
         )
@@ -193,9 +199,13 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
     if(HAL_${FAMILY}_VERSION STREQUAL cube)
         set(STM32_USE_HAL_FROM_CUBE_${FAMILY} ON)
     else()
+        if(NOT HAL_${FAMILY}_URL)
+            set(HAL_${FAMILY}_URL https://github.com/STMicroelectronics/stm32${FAMILY_L}xx_hal_driver/)
+        endif()
+
         FetchContent_Declare(
             STM32-HAL-${FAMILY}
-            GIT_REPOSITORY https://github.com/STMicroelectronics/stm32${FAMILY_L}xx_hal_driver/
+            GIT_REPOSITORY ${HAL_${FAMILY}_URL}
             GIT_TAG        ${HAL_${FAMILY}_VERSION}
             GIT_PROGRESS   TRUE
         )
