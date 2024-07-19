@@ -62,6 +62,7 @@ include(stm32/u0)
 include(stm32/u5)
 include(stm32/wb)
 include(stm32/wb0)
+include(stm32/wba)
 include(stm32/wl)
 include(stm32/mp1)
 
