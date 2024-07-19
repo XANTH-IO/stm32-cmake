@@ -23,6 +23,15 @@ target_link_options(STM32::WB0 INTERFACE
     -mcpu=cortex-m0plus
 )
 
+function(stm32wb0_get_ld_filename DEVICE FILENAME)
+
+    string(REGEX REPLACE "^(STM32)?WB0([5679])([CKT][CEZ])?.*" "stm32wb0\\2_flash.ld" filename ${DEVICE})
+
+    if(FILENAME)
+        set(${FILENAME} ${filename} PARENT_SCOPE)
+    endif()
+endfunction()
+
 set(STM32_WB0_DEVICES
     # WB05KN
     WB05KZ
