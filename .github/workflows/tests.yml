@@ -35,7 +35,6 @@ jobs:
       working-directory: ${{ runner.workspace }}/tests/fetch/build
       run: |
         FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
-        DEST=stm32${FAMILY_L}xx_hal_conf.h
         HAL_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
         HAL_ALT_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}x_hal_conf_template.h
         CUBE_HAL_CONF_TEMPLATE=_deps/stm32cube${FAMILY_L}-src/Drivers/STM32${{ matrix.family }}xx_HAL_Driver/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
@@ -48,6 +47,8 @@ jobs:
         else
           exit 1
         fi
+        #get rid off "_template" in file name
+        DEST=$(basename $HAL_ALT_CONF_TEMPLATE | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
         cp ${SRC} ${DEST}
 
     - name: Build tests/fetch
@@ -108,7 +109,6 @@ jobs:
       working-directory: ${{ runner.workspace }}/tests/hal/build
       run: |
         FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
-        DEST=stm32${FAMILY_L}xx_hal_conf.h
         HAL_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
         HAL_ALT_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}x_hal_conf_template.h
         CUBE_HAL_CONF_TEMPLATE=_deps/stm32cube${FAMILY_L}-src/Drivers/STM32${{ matrix.family }}xx_HAL_Driver/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
@@ -121,6 +121,8 @@ jobs:
         else
           exit 1
         fi
+        #get rid off "_template" in file name
+        DEST=$(basename $HAL_ALT_CONF_TEMPLATE | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
         cp ${SRC} ${DEST}
 
     - name: Build tests/hal
