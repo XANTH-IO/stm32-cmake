@@ -37,9 +37,12 @@ jobs:
         FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
         DEST=stm32${FAMILY_L}xx_hal_conf.h
         HAL_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
+        HAL_ALT_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}x_hal_conf_template.h
         CUBE_HAL_CONF_TEMPLATE=_deps/stm32cube${FAMILY_L}-src/Drivers/STM32${{ matrix.family }}xx_HAL_Driver/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
         if [ -f ${HAL_CONF_TEMPLATE} ]; then
           SRC=${HAL_CONF_TEMPLATE}
+        elif [ -f ${HAL_ALT_CONF_TEMPLATE} ]; then
+          SRC=${HAL_ALT_CONF_TEMPLATE} 
         elif [ -f ${CUBE_HAL_CONF_TEMPLATE} ]; then
           SRC=${CUBE_HAL_CONF_TEMPLATE}
         else
@@ -107,9 +110,12 @@ jobs:
         FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
         DEST=stm32${FAMILY_L}xx_hal_conf.h
         HAL_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
+        HAL_ALT_CONF_TEMPLATE=_deps/stm32-hal-${FAMILY_L}-src/Inc/stm32${FAMILY_L}x_hal_conf_template.h
         CUBE_HAL_CONF_TEMPLATE=_deps/stm32cube${FAMILY_L}-src/Drivers/STM32${{ matrix.family }}xx_HAL_Driver/Inc/stm32${FAMILY_L}xx_hal_conf_template.h
         if [ -f ${HAL_CONF_TEMPLATE} ]; then
           SRC=${HAL_CONF_TEMPLATE}
+        elif [ -f ${HAL_ALT_CONF_TEMPLATE} ]; then
+          SRC=${HAL_ALT_CONF_TEMPLATE}        
         elif [ -f ${CUBE_HAL_CONF_TEMPLATE} ]; then
           SRC=${CUBE_HAL_CONF_TEMPLATE}
         else
