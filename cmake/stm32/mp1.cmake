@@ -37,6 +37,18 @@ function(stm32mp1_get_ld_filename DEVICE FILENAME)
 endfunction()
 
 set(STM32_MP1_DEVICES
+    # MP131A this devices has not cortex M core
+    # MP131C this devices has not cortex M core
+    # MP131D this devices has not cortex M core
+    # MP131F this devices has not cortex M core
+    # MP133A this devices has not cortex M core
+    # MP133C this devices has not cortex M core
+    # MP133D this devices has not cortex M core
+    # MP133F this devices has not cortex M core
+    # MP135A this devices has not cortex M core
+    # MP135C this devices has not cortex M core
+    # MP135D this devices has not cortex M core
+    # MP135F this devices has not cortex M core
     MP151A
     MP151C
     MP151D
