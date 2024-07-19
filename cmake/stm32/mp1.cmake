@@ -30,6 +30,12 @@ function(stm32mp1_get_memory_info DEVICE TYPE FLASH_SIZE)
     endif()
 endfunction()
 
+function(stm32mp1_get_ld_filename DEVICE FILENAME)
+    if(FILENAME)
+        set(${FILENAME} "stm32mp15xx_m4.ld" PARENT_SCOPE)
+    endif()
+endfunction()
+
 set(STM32_MP1_DEVICES
     MP151A
     MP151C

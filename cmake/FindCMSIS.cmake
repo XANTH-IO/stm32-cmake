@@ -69,11 +69,15 @@ function(cmsis_generate_default_linker_script FAMILY DEVICE CORE)
     endif()
     
     set(OUTPUT_LD_FILE "${CMAKE_CURRENT_BINARY_DIR}/${DEVICE}${CORE_U}.ld")
+
+    string(TOLOWER ${FAMILY} FAMILY_L)
     
-    if(${FAMILY} STREQUAL MP1)
-        string(TOLOWER ${FAMILY} FAMILY_L)
+    if(COMMAND "stm32${FAMILY_L}_get_ld_filename")
+
+        cmake_language(CALL stm32${FAMILY_L}_get_ld_filename ${DEVICE} FILENAME)
+
         find_file(CMSIS_${FAMILY}${CORE_U}_LD_SCRIPT
-            NAMES stm32mp15xx_m4.ld
+            NAMES ${FILENAME}
             PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates/gcc/linker"
             NO_DEFAULT_PATH
         )
