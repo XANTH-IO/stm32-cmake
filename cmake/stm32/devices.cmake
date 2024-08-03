@@ -65,6 +65,7 @@ include(stm32/wb0)
 include(stm32/wba)
 include(stm32/wl)
 include(stm32/mp1)
+include(stm32/mp2)
 
 # Store a list of devices into a given STM_DEVICES list.
 # You can also specify multiple device families. Examples:

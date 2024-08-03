@@ -29,6 +29,11 @@ if(STM32MP1 IN_LIST CMSIS_FIND_COMPONENTS)
     list(APPEND CMSIS_FIND_COMPONENTS STM32MP1_M4)
 endif()
 
+if(STM32MP2 IN_LIST CMSIS_FIND_COMPONENTS)
+    list(REMOVE_ITEM CMSIS_FIND_COMPONENTS STM32MP2)
+    list(APPEND CMSIS_FIND_COMPONENTS STM32MP2_M33)
+endif()
+
 list(REMOVE_DUPLICATES CMSIS_FIND_COMPONENTS)
 
 # This section fills the RTOS or family components list
@@ -208,9 +213,9 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
         target_include_directories(CMSIS::STM32::${FAMILY}${CORE_C} INTERFACE "${CMSIS_${FAMILY}${CORE_U}_PATH}/Include")
     endif()
 
-    # search for system_stm32[XX]xx.c
+    # search for system, can be named system_stm32[XX]xx.c / system_stm32[XX]x.c / system_stm32[XX]xx_cmY.c
     find_file(CMSIS_${FAMILY}${CORE_U}_SYSTEM
-        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c
+        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c system_stm32${FAMILY_L}xx${CORE_Ucm}.c
         PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates"
         NO_DEFAULT_PATH
     )
