@@ -44,6 +44,9 @@ function(stm32mp2_get_ld_filename DEVICE FILENAME)
     endif()
 endfunction()
 
+set(STM32MP2_HAL_REMOVE_ITEM STM32MP2)
+set(STM32MP2_HAL_APPENDS STM32MP2_M33)
+
 set(STM32_MP2_DEVICES
     MP251A
     MP251C

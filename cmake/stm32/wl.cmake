@@ -120,6 +120,9 @@ function(stm32wl_get_device_cores DEVICE TYPE CORES)
     endif()
 endfunction()
 
+set(STM32WL_HAL_REMOVE_ITEM STM32WL)
+set(STM32WL_HAL_APPENDS STM32WL_M4 STM32WL_M0PLUS)
+
 set(STM32_WL_DEVICES
     # WL33C8
     # WL33CB

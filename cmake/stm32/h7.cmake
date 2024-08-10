@@ -86,6 +86,9 @@ function(stm32h7_get_device_cores DEVICE TYPE CORES)
     endif()
 endfunction()
 
+set(STM32H7_HAL_REMOVE_ITEM STM32H7)
+set(STM32H7_HAL_APPENDS STM32H7_M7 STM32H7_M4)
+
 set(STM32_H7_DEVICES
     H723VE
     H723VG

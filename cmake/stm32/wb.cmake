@@ -49,6 +49,9 @@ function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE RAM RAM_ORIGIN TWO_
     endif()
 endfunction()
 
+set(STM32WB_HAL_REMOVE_ITEM STM32WB)
+set(STM32WB_HAL_APPENDS STM32WB_M4)
+
 set(STM32_WB_DEVICES
     WB10CC
     WB15CC

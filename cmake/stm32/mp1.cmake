@@ -36,6 +36,9 @@ function(stm32mp1_get_ld_filename DEVICE FILENAME)
     endif()
 endfunction()
 
+set(STM32MP1_HAL_REMOVE_ITEM STM32MP1)
+set(STM32MP1_HAL_APPENDS STM32MP1_M4)
+
 set(STM32_MP1_DEVICES
     # MP131A this devices has not cortex M core
     # MP131C this devices has not cortex M core
