@@ -37,9 +37,10 @@ jobs:
         TEMPLATES=($(find _deps -name "*_template.h"))
         for template in ${TEMPLATES[@]}; do
           #get rid off "_template" in file name
-          DEST=$(basename ${template}| sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
+          DEST=$(basename ${template} | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
           cp ${template} ${DEST}
         done
+      if: ${{ matrix.family != 'MP2'}}
 
     - name: Build tests/fetch
       working-directory: ${{ runner.workspace }}/tests/fetch/build
@@ -60,19 +61,19 @@ jobs:
 
     - name: Create build directory for tests/cmsis
       run: cmake -E make_directory ${{ runner.workspace }}/tests/cmsis/build
-      if: ${{ matrix.family != 'MP1' }}
+      if: ${{ matrix.family != 'MP1' && matrix.family != 'MP2'}}
 
     - name: Configure tests/cmsis
       shell: bash
       working-directory: ${{ runner.workspace }}/tests/cmsis/build
       run: cmake -DTEST_FAMILIES=${{ matrix.family }} -DFETCH_ST_SOURCES=TRUE $GITHUB_WORKSPACE/tests/cmsis/
-      if: ${{ matrix.family != 'MP1' }}
+      if: ${{ matrix.family != 'MP1' && matrix.family != 'MP2'}}
 
     - name: Build tests/cmsis
       working-directory: ${{ runner.workspace }}/tests/cmsis/build
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
-      if: ${{ matrix.family != 'MP1' }}
+      if: ${{ matrix.family != 'MP1' && matrix.family != 'MP2'}}
 
   Test-HAL:
     runs-on: ubuntu-latest
@@ -101,9 +102,10 @@ jobs:
         TEMPLATES=($(find _deps -name "*_template.h"))
         for template in ${TEMPLATES[@]}; do
           #get rid off "_template" in file name
-          DEST=$(basename ${template}| sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
+          DEST=$(basename ${template} | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
           cp ${template} ${DEST}
         done
+      if: ${{ matrix.family != 'MP2'}} 
 
     - name: Build tests/hal
       working-directory: ${{ runner.workspace }}/tests/hal/build

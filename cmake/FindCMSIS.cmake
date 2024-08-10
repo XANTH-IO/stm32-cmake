@@ -29,6 +29,11 @@ if(STM32MP1 IN_LIST CMSIS_FIND_COMPONENTS)
     list(APPEND CMSIS_FIND_COMPONENTS STM32MP1_M4)
 endif()
 
+if(STM32MP2 IN_LIST CMSIS_FIND_COMPONENTS)
+    list(REMOVE_ITEM CMSIS_FIND_COMPONENTS STM32MP2)
+    list(APPEND CMSIS_FIND_COMPONENTS STM32MP2_M33)
+endif()
+
 list(REMOVE_DUPLICATES CMSIS_FIND_COMPONENTS)
 
 # This section fills the RTOS or family components list
@@ -134,6 +139,7 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
         set(CORE ${C})
         set(CORE_C "::${CORE}")
         set(CORE_U "_${CORE}")
+        string(TOLOWER ${CORE_U} CORE_u)
         set(CORE_Ucm "_c${CORE}")
         string(TOLOWER ${CORE_Ucm} CORE_Ucm)
         message(TRACE "FindCMSIS: core match in component name for COMP ${COMP}. CORE is ${CORE}")
@@ -141,6 +147,7 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
         unset(CORE)
         unset(CORE_C)
         unset(CORE_U)
+        unset(CORE_u)
         unset(CORE_Ucm)
     endif()
     
@@ -208,9 +215,9 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
         target_include_directories(CMSIS::STM32::${FAMILY}${CORE_C} INTERFACE "${CMSIS_${FAMILY}${CORE_U}_PATH}/Include")
     endif()
 
-    # search for system_stm32[XX]xx.c
+    # search for system, can be named system_stm32[XX]xx.c / system_stm32[XX]x.c / system_stm32[XX]xx_mY.c
     find_file(CMSIS_${FAMILY}${CORE_U}_SYSTEM
-        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c
+        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c system_stm32${FAMILY_L}xx${CORE_u}.c
         PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates"
         NO_DEFAULT_PATH
     )
@@ -244,13 +251,14 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
         find_file(CMSIS_${FAMILY}${CORE_U}_${TYPE}_STARTUP
             NAMES startup_stm32${TYPE_L}.s 
                   startup_stm32${TYPE_L}${CORE_Ucm}.s
+                  startup_stm32${TYPE_L}${CORE_u}.s
             PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates/gcc"
             NO_DEFAULT_PATH
         )
         list(APPEND CMSIS_SOURCES "${CMSIS_${FAMILY}${CORE_U}_${TYPE}_STARTUP}")
         if(NOT CMSIS_${FAMILY}${CORE_U}_${TYPE}_STARTUP)
             set(STM_DEVICES_FOUND FALSE)
-            message(VERBOSE "FindCMSIS: did not find file: startup_stm32${TYPE_L}.s or startup_stm32${TYPE_L}${CORE_Ucm}.s")
+            message(VERBOSE "FindCMSIS: did not find startup file")
             break()
         endif()
         
