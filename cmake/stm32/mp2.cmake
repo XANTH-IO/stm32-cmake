@@ -6,10 +6,10 @@ set(STM32_MP2_TYPES
 )
 
 set(STM32_MP2_TYPE_MATCH
-    "MP251A" "MP251C" "MP251A" "MP251C"  
-    "MP253A" "MP253C" "MP253A" "MP253C"
-    "MP253A" "MP253C" "MP253A" "MP253C"
-    "MP257A" "MP257C" "MP257A" "MP257C"
+    "MP251A" "MP251C" "MP251D" "MP251F"  
+    "MP253A" "MP253C" "MP253D" "MP253F"
+    "MP255A" "MP255C" "MP255D" "MP255F"
+    "MP257A" "MP257C" "MP257D" "MP257F"
 )
 
 set(STM32_MP2_RAM_SIZES
@@ -30,7 +30,7 @@ stm32_util_create_family_targets(MP2 M33)
 
 target_compile_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard)
 target_link_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard)
-target_compile_definitions(STM32::MP2::M33 INTERFACE CORE_CM4)
+target_compile_definitions(STM32::MP2::M33 INTERFACE CORE_CM33)
 
 function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE)
     if(FLASH_SIZE)
