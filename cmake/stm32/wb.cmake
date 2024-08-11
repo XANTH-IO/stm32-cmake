@@ -38,6 +38,10 @@ target_link_options(STM32::WB::M4 INTERFACE
     -mcpu=cortex-m4 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
+function(stm32wb_get_device_cores CORES)
+    set(${CORES} "M4" PARENT_SCOPE)
+endfunction()
+
 function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE RAM RAM_ORIGIN TWO_FLASH_BANKS)
     set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)
     list(FIND STM32_WB_TYPES ${TYPE} TYPE_INDEX)

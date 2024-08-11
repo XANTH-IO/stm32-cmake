@@ -32,6 +32,10 @@ target_compile_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-
 target_link_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard)
 target_compile_definitions(STM32::MP2::M33 INTERFACE CORE_CM33)
 
+function(stm32mp2_get_device_cores CORES)
+    set(${CORES} "M33" PARENT_SCOPE)
+endfunction()
+
 function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE)
     if(FLASH_SIZE)
         set(${FLASH_SIZE} "0KB" PARENT_SCOPE)
