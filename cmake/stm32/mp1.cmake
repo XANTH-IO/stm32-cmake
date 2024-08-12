@@ -24,7 +24,11 @@ target_compile_options(STM32::MP1::M4 INTERFACE -mcpu=cortex-m4 -mfpu=fpv4-sp-d1
 target_link_options(STM32::MP1::M4 INTERFACE -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard)
 target_compile_definitions(STM32::MP1::M4 INTERFACE CORE_CM4)
 
-function(stm32mp1_get_memory_info DEVICE TYPE FLASH_SIZE)
+function(stm32mp1_get_device_cores CORES)
+    set(${CORES} "M4" PARENT_SCOPE)
+endfunction()
+
+function(stm32mp1_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
     if(FLASH_SIZE)
         set(${FLASH_SIZE} "0KB" PARENT_SCOPE)
     endif()
@@ -35,6 +39,9 @@ function(stm32mp1_get_ld_filename DEVICE FILENAME)
         set(${FILENAME} "stm32mp15xx_m4.ld" PARENT_SCOPE)
     endif()
 endfunction()
+
+set(STM32MP1_FIND_REMOVE_ITEM STM32MP1)
+set(STM32MP1_FIND_APPENDS STM32MP1_M4)
 
 set(STM32_MP1_DEVICES
     # MP131A this devices has not cortex M core

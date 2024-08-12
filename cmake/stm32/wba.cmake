@@ -22,7 +22,7 @@ target_link_options(STM32::WBA INTERFACE
     -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
-function(stm32wba_get_memory_info DEVICE RAM_SIZE)
+function(stm32wba_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
     stm32_extract_info(${DEVICE} FLASH_CODE F)
 
     if(F STREQUAL "E")

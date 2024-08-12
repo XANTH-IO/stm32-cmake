@@ -53,7 +53,7 @@ target_compile_definitions(STM32::H7::M4 INTERFACE
     -DCORE_CM4
 )
 
-function(stm32h7_get_memory_info DEVICE TYPE CORE RAM FLASH_ORIGIN RAM_ORIGIN TWO_FLASH_BANKS)
+function(stm32h7_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     if(${TYPE} IN_LIST STM32_H7_DUAL_CORE)
         set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)  
     else()
@@ -78,13 +78,28 @@ function(stm32h7_get_memory_info DEVICE TYPE CORE RAM FLASH_ORIGIN RAM_ORIGIN TW
     endif()
 endfunction()
 
-function(stm32h7_get_device_cores DEVICE TYPE CORES)
-    if(${TYPE} IN_LIST STM32_H7_DUAL_CORE)
-        set(${CORES} M7 M4 PARENT_SCOPE)
+function(stm32h7_get_device_cores CORES)
+    set(ARG_OPTIONS "")
+    set(ARG_SINGLE DEVICE)
+    set(ARG_MULTIPLE "")
+    cmake_parse_arguments(PARSE_ARGV 1 ARG "${ARG_OPTIONS}" "${ARG_SINGLE}" "${ARG_MULTIPLE}") 
+
+    if(NOT ARG_DEVICE)
+        set(CORE_LIST M7 M4)
     else()
-        set(${CORES} M7 PARENT_SCOPE)
+        stm32_get_chip_type(H7 ${ARG_DEVICE} TYPE)
+        if(${TYPE} IN_LIST STM32_H7_DUAL_CORE)
+            set(CORE_LIST M7 M4)
+        else()
+            set(CORE_LIST M7)
+        endif()
     endif()
+
+    set(${CORES} ${CORE_LIST} PARENT_SCOPE)
 endfunction()
+
+set(STM32H7_FIND_REMOVE_ITEM STM32H7)
+set(STM32H7_FIND_APPENDS STM32H7_M7 STM32H7_M4)
 
 set(STM32_H7_DEVICES
     H723VE

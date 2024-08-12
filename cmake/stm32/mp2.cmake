@@ -32,7 +32,11 @@ target_compile_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-
 target_link_options(STM32::MP2::M33 INTERFACE -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard)
 target_compile_definitions(STM32::MP2::M33 INTERFACE CORE_CM33)
 
-function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE)
+function(stm32mp2_get_device_cores CORES)
+    set(${CORES} "M33" PARENT_SCOPE)
+endfunction()
+
+function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
     if(FLASH_SIZE)
         set(${FLASH_SIZE} "0KB" PARENT_SCOPE)
     endif()
@@ -43,6 +47,9 @@ function(stm32mp2_get_ld_filename DEVICE FILENAME)
         set(${FILENAME} "stm32mp2xx_DDR_m33_ns.ld" PARENT_SCOPE)
     endif()
 endfunction()
+
+set(STM32MP2_FIND_REMOVE_ITEM STM32MP2)
+set(STM32MP2_FIND_APPENDS STM32MP2_M33)
 
 set(STM32_MP2_DEVICES
     MP251A

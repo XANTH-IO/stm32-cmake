@@ -25,8 +25,8 @@ target_link_options(STM32::F1 INTERFACE
 )
 
 function(stm32f1_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
-    string(REGEX REPLACE "F1[0-9][0-9].([468BCDEFGHI])" "\\1" SIZE_CODE ${DEVICE})
-    
+    stm32_extract_info(${DEVICE} FLASH_CODE SIZE_CODE)
+
     if((TYPE STREQUAL "F100xB") OR (TYPE STREQUAL "F100xE"))
         if((SIZE_CODE STREQUAL "4") OR (SIZE_CODE STREQUAL "6"))
             set(RAM "4K")

@@ -29,8 +29,7 @@ target_link_options(STM32::L1 INTERFACE
 )
 
 function(stm32l1_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
-    string(REGEX REPLACE "L1[0-9][0-9].([68BCDE])" "\\1" SIZE_CODE ${DEVICE})
-    
+    stm32_extract_info(${DEVICE} FLASH_CODE SIZE_CODE)
     unset(RAM)
     
     if((TYPE STREQUAL "L100xB"))

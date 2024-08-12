@@ -38,7 +38,11 @@ target_link_options(STM32::WB::M4 INTERFACE
     -mcpu=cortex-m4 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
 )
 
-function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE RAM RAM_ORIGIN TWO_FLASH_BANKS)
+function(stm32wb_get_device_cores CORES)
+    set(${CORES} "M4" PARENT_SCOPE)
+endfunction()
+
+function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)
     list(FIND STM32_WB_TYPES ${TYPE} TYPE_INDEX)
     list(GET STM32_WB_RAM_SIZES ${TYPE_INDEX} RAM_VALUE)
@@ -48,6 +52,9 @@ function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE RAM RAM_ORIGIN TWO_
         set(${FLASH_SIZE} "320K" PARENT_SCOPE)
     endif()
 endfunction()
+
+set(STM32WB_FIND_REMOVE_ITEM STM32WB)
+set(STM32WB_FIND_APPENDS STM32WB_M4)
 
 set(STM32_WB_DEVICES
     WB10CC
