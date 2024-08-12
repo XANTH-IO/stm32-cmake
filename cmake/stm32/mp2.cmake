@@ -36,7 +36,7 @@ function(stm32mp2_get_device_cores CORES)
     set(${CORES} "M33" PARENT_SCOPE)
 endfunction()
 
-function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE)
+function(stm32mp2_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
     if(FLASH_SIZE)
         set(${FLASH_SIZE} "0KB" PARENT_SCOPE)
     endif()

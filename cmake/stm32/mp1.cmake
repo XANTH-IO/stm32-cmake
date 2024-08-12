@@ -28,7 +28,7 @@ function(stm32mp1_get_device_cores CORES)
     set(${CORES} "M4" PARENT_SCOPE)
 endfunction()
 
-function(stm32mp1_get_memory_info DEVICE TYPE FLASH_SIZE)
+function(stm32mp1_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
     if(FLASH_SIZE)
         set(${FLASH_SIZE} "0KB" PARENT_SCOPE)
     endif()

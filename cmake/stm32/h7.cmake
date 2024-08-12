@@ -53,7 +53,7 @@ target_compile_definitions(STM32::H7::M4 INTERFACE
     -DCORE_CM4
 )
 
-function(stm32h7_get_memory_info DEVICE TYPE CORE RAM FLASH_ORIGIN RAM_ORIGIN TWO_FLASH_BANKS)
+function(stm32h7_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     if(${TYPE} IN_LIST STM32_H7_DUAL_CORE)
         set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)  
     else()

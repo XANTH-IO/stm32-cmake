@@ -42,7 +42,7 @@ function(stm32wb_get_device_cores CORES)
     set(${CORES} "M4" PARENT_SCOPE)
 endfunction()
 
-function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE RAM RAM_ORIGIN TWO_FLASH_BANKS)
+function(stm32wb_get_memory_info DEVICE TYPE CORE FLASH_SIZE FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)
     list(FIND STM32_WB_TYPES ${TYPE} TYPE_INDEX)
     list(GET STM32_WB_RAM_SIZES ${TYPE_INDEX} RAM_VALUE)

@@ -53,7 +53,7 @@ target_link_options(STM32::WL::M0PLUS INTERFACE
     -mcpu=cortex-m0plus -mfloat-abi=soft
 )
 
-function(stm32wl_get_memory_info DEVICE TYPE CORE RAM FLASH_ORIGIN RAM_ORIGIN TWO_FLASH_BANKS)
+function(stm32wl_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     list(FIND STM32_WL_TYPES ${TYPE} TYPE_INDEX)
     set(INDEX 0)
     foreach(REGEXP ${STM32_WL_TYPE_MATCH})
