@@ -25,6 +25,23 @@ set(STM32_H7_CCRAM_SIZES
       0K   0K   0K   0K   0K   0K
 )
 
+set(STM32_H7RS_TYPES
+    H7R3xx H7S3xx
+    H7R7xx H7S7xx
+)
+set(STM32_H7RS_TYPE_MATCH
+   "H7R3.." "H7S3.."
+   "H7R7.." "H7S7.."
+)
+set(STM32_H7RS_RAM_SIZES
+    620K 620K
+    620K 620K
+)
+set(STM32_H7RS_CCRAM_SIZES 
+    0K   0K
+    0K   0K
+)
+
 set(STM32_H7_DUAL_CORE
       H745xx H755xx H747xx H757xx
 )
@@ -52,6 +69,22 @@ target_link_options(STM32::H7::M4 INTERFACE
 target_compile_definitions(STM32::H7::M4 INTERFACE 
     -DCORE_CM4
 )
+
+stm32_util_create_family_targets(H7RS)
+
+target_compile_options(STM32::H7RS INTERFACE 
+    -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
+)
+
+target_link_options(STM32::H7RS INTERFACE 
+    -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard
+)
+
+function(stm32h7_get_actual_family DEVICE FAMILY)
+    if(${DEVICE} MATCHES "(STM32)?H7(R|S).*")
+        set(FAMILY H7RS PARENT_SCOPE)
+    endif()
+endfunction()
 
 function(stm32h7_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     if(${TYPE} IN_LIST STM32_H7_DUAL_CORE)
@@ -218,15 +251,44 @@ set(STM32_H7_DEVICES
 )
 list(APPEND STM32_ALL_DEVICES STM32_H7_DEVICES)
 
+set(STM32_H7RS_DEVICES
+    H7R3A8
+    H7R3I8
+    H7R3L8
+    H7R3R8
+    H7R3V8
+    H7R3Z8
+    H7R7A8
+    H7R7I8
+    H7R7L8
+    H7R7Z8
+    H7S3A8
+    H7S3I8
+    H7S3L8
+    H7S3R8
+    H7S3V8
+    H7S3Z8
+    H7S7A8
+    H7S7I8
+    H7S7L8
+    H7S7Z8
+)
+list(APPEND STM32_ALL_DEVICES STM32_H7_DEVICES)
+
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32H7_M4
     STM32H7_M7
+    STM32H7RS
 )
 
-list(APPEND STM32_FETCH_FAMILIES H7)
+list(APPEND STM32_FETCH_FAMILIES H7 H7RS)
 
 # SERIE SS1951
 
 set(CUBE_H7_VERSION  v1.11.2)
 set(CMSIS_H7_VERSION v1.10.4)
 set(HAL_H7_VERSION   v1.11.3)
+
+set(CUBE_H7RS_VERSION  v1.1.0)
+set(CMSIS_H7RS_VERSION v1.1.0)
+set(HAL_H7RS_VERSION   v1.1.0)
