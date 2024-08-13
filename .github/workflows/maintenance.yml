@@ -69,22 +69,31 @@ jobs:
         with:
           repository: STMicroelectronics/stm32${{ matrix.family }}xx_hal_driver
 
-      - name: Update Cube with latest version
+      - name: Prepare Env variables
+        id: find-family-src-file
         run: |
-          family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]').cmake
-          sed -ri 's@(set\(CUBE_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cube.outputs.TAG }}\4@g' $family_src_file
+          family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/)
+          echo "FAMILY_SRC_FILE=${family_src_file}" >> $GITHUB_OUTPUT
+
+      - name: Update Cube with latest version
+        env:
+          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+        run:
+          sed -ri 's@(set\(CUBE_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cube.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
       - name: Update CMSIS with latest version
         if: ${{ steps.get-latest-cmsis.outputs.TAG }}
-        run: |
-          family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]').cmake
-          sed -ri 's@(set\(CMSIS_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cmsis.outputs.TAG }}\4@g' $family_src_file
+        env:
+          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+        run:
+          sed -ri 's@(set\(CMSIS_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cmsis.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
       - name: Update HAL with latest version
         if: ${{ steps.get-latest-hal.outputs.TAG }}
-        run: |
-          family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]').cmake
-          sed -ri 's@(set\(HAL_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-hal.outputs.TAG }}\4@g' $family_src_file
+        env:
+          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+        run:
+          sed -ri 's@(set\(HAL_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-hal.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
       - name: Generate token
         uses: tibdex/github-app-token@v2
@@ -123,7 +132,7 @@ jobs:
           id: prepare-env
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
-            family_src_file=${GITHUB_WORKSPACE}/cmake/stm32/${FAMILY_L}.cmake
+            family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/)
             {
               echo "FAMILY_L=${FAMILY_L}"
               echo "FAMILY_SRC_FILE=${family_src_file}"
