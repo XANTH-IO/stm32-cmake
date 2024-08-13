@@ -81,7 +81,6 @@ target_link_options(STM32::H7RS INTERFACE
 )
 
 function(stm32h7_get_actual_family DEVICE FAMILY)
-    message(STATUS "Looking for ${DEVICE} actual H7 family")
     if(${DEVICE} MATCHES "(STM32)?H7(R|S).*")
         set(FAMILY H7RS PARENT_SCOPE)
     endif()
