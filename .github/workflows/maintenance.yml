@@ -72,7 +72,7 @@ jobs:
       - name: Prepare Env variables
         id: find-family-src-file
         run: |
-          family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/)
+          family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/ | head -n1)
           echo "FAMILY_SRC_FILE=${family_src_file}" >> $GITHUB_OUTPUT
 
       - name: Update Cube with latest version
@@ -132,7 +132,7 @@ jobs:
           id: prepare-env
           run: |
             FAMILY_L=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
-            family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/)
+            family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -e "stm32_util_create_family_targets(${{ matrix.family }}" cmake/stm32/ | head -n1)
             {
               echo "FAMILY_L=${FAMILY_L}"
               echo "FAMILY_SRC_FILE=${family_src_file}"
