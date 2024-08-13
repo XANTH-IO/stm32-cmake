@@ -153,9 +153,7 @@ jobs:
           if: ${{ ! steps.get-ss-id-from-file.outputs.SERIE }}
           run: |
             URL=https://www.st.com/en/microcontrollers-microprocessors/stm32${FAMILY_L}-series.html
-            serie=$(curl --request GET \
-              --silent --url ${URL} \
-              --header "User-Agent: Firefox/9000" \
+            serie=$(curl ${URL} --compressed -H 'User-Agent: Firefox/9000' \
               | sed -rne "s@(.*)(data-associated-to=\")(SS[0-9]{4,})(\".*)@\3@p")
             if [ -n ${serie} ]; then
               echo "SERIE=$serie" >> $GITHUB_OUTPUT
@@ -174,10 +172,7 @@ jobs:
             for serie in ${SERIES[@]}; do
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
               echo "Retrieving ${URL}"
-              curl --request GET \
-                --silent --url "${URL}" \
-                --header "User-Agent: Firefox/9000" \
-                -o .series/${serie}.json
+              curl ${URL} --compressed -H 'User-Agent: Firefox/9000' -o .series/${serie}.json
             done
 
         - name: Get existing devices list
