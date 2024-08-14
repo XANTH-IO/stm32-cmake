@@ -51,34 +51,61 @@ jobs:
       - name: Print Job
         run: echo "Updating ${{ matrix.family }} Family with latest ST tags"
 
+      - name: Prepare Env variables
+        id: prepare_env
+        run: |
+          family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -E "stm32_util_create_family_targets\(\s?${{ matrix.family }}(\s\w+)?\)" cmake/stm32/)
+          family_l=$(echo "${{ matrix.family }}" | tr '[:upper:]' '[:lower:]')
+          cube=$(sed -nr "s/set\(CUBE_${{ matrix.family }}_URL\s+(.*)\)/\1/p" ${family_src_file})
+          if [[ -z ${cube} ]]; then
+            cube="STMicroelectronics/STM32Cube${{ matrix.family }}"
+          else
+            cube="$(echo ${cube} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+          fi
+          cmsis=$(sed -nr "s/set\(CMSIS_${{ matrix.family }}_URL\s+(.*)\)/\1/p" ${family_src_file})
+          if [[ -z ${cmsis} ]]; then
+            cmsis="STMicroelectronics/cmsis_device_${family_l}"
+          else
+            cmsis="$(echo ${cmsis} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+          fi
+          hal=$(sed -nr "s/set\(HAL_${{ matrix.family }}_URL\s+(.*)\)/\1/p" ${family_src_file})
+          if [[ -z ${hal} ]]; then
+            hal="STMicroelectronics/stm32${family_l}xx_hal_driver"
+          else
+            hal="$(echo ${hal} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+          fi
+          {
+            echo "FAMILY_SRC_FILE=${family_src_file}"
+            echo "CUBE_REPO=${cube}"
+            echo "CMSIS_REPO=${cmsis}"
+            echo "HAL_REPO=${hal}"
+          } >> $GITHUB_OUTPUT
+
       - name: Get Cube version
         id: get-latest-cube
+        if: ${{ steps.prepare_env.outputs.CUBE_REPO }}
         uses: './.github/actions/getLatestTag'
         with:
-          repository: STMicroelectronics/STM32Cube${{ matrix.family }}
+          repository: ${{ steps.prepare_env.outputs.CUBE_REPO }}
 
       - name: Get CMSIS version
         id: get-latest-cmsis
+        if: ${{ steps.prepare_env.outputs.CMSIS_REPO }}
         uses: './.github/actions/getLatestTag'
         with:
-          repository: STMicroelectronics/cmsis_device_${{ matrix.family }}
+          repository: ${{ steps.prepare_env.outputs.CMSIS_REPO }}
 
       - name: Get HAL version
         id: get-latest-hal
+        if: ${{ steps.prepare_env.outputs.HAL_REPO }}
         uses: './.github/actions/getLatestTag'
         with:
-          repository: STMicroelectronics/stm32${{ matrix.family }}xx_hal_driver
-
-      - name: Prepare Env variables
-        id: find-family-src-file
-        run: |
-          family_src_file=${GITHUB_WORKSPACE}/$(grep -lr -E "stm32_util_create_family_targets\(\s?${{ matrix.family }}(\s\w+)?\)" cmake/stm32/)
-          echo "FAMILY_SRC_FILE=${family_src_file}" >> $GITHUB_OUTPUT
+          repository: ${{ steps.prepare_env.outputs.HAL_REPO }}
 
       - name: Update Cube with latest version
         if: ${{ steps.get-latest-cube.outputs.TAG }}
         env:
-          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+          FAMILY_SRC_FILE: ${{ steps.prepare_env.outputs.FAMILY_SRC_FILE }}
         run:
           sed -ri 's@(set\(CUBE_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cube.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
