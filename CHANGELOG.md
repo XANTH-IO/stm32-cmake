@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.0.0 (2024/08/14)
+
+#### Enhancements:
+
+- Project is forked from https://github.com/ObKo/stm32-cmake/
+- Nightly maintenance job to look for new device to support and keep STMicroelectronics repository up to date
+- Support of all ST Families, now including WBA WB0 H7RS and MP2
+- Remove special cases in common processes by @xanthio in https://github.com/XANTH-IO/stm32-cmake/pull/286
+- Regex refactoring by @xanthio in https://github.com/XANTH-IO/stm32-cmake/pull/273
+- Huge rework for tests
+
 ## v2.1.0 (2021/08/09)
 
 #### Enhancements:
