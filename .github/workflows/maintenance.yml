@@ -112,14 +112,14 @@ jobs:
       - name: Update CMSIS with latest version
         if: ${{ steps.get-latest-cmsis.outputs.TAG }}
         env:
-          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+          FAMILY_SRC_FILE: ${{ steps.prepare_env.outputs.FAMILY_SRC_FILE }}
         run:
           sed -ri 's@(set\(CMSIS_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-cmsis.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
       - name: Update HAL with latest version
         if: ${{ steps.get-latest-hal.outputs.TAG }}
         env:
-          FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
+          FAMILY_SRC_FILE: ${{ steps.prepare_env.outputs.FAMILY_SRC_FILE }}
         run:
           sed -ri 's@(set\(HAL_${{ matrix.family }}_VERSION(\s+))(.*)(\))@\1${{ steps.get-latest-hal.outputs.TAG }}\4@g' ${FAMILY_SRC_FILE}
 
