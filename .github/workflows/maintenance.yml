@@ -76,6 +76,7 @@ jobs:
           echo "FAMILY_SRC_FILE=${family_src_file}" >> $GITHUB_OUTPUT
 
       - name: Update Cube with latest version
+        if: ${{ steps.get-latest-cube.outputs.TAG }}
         env:
           FAMILY_SRC_FILE: ${{ steps.find-family-src-file.outputs.FAMILY_SRC_FILE }}
         run:
