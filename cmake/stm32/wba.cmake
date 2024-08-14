@@ -1,16 +1,16 @@
 set(STM32_WBA_TYPES
-    WBA54xx WBA55xx
+    WBA52xx WBA54xx WBA55xx
 )
 
 set(STM32_WBA_TYPE_MATCH
-    "WBA54.[EG]" "WBA55.[EG]"
+    "WBA52.[EG]" "WBA54.[EG]" "WBA55.[EG]"
 )
 
 set(STM32_WBA_RAM_SIZES 
-    0K 0K
+    0K 0K 0K
 )
 set(STM32_WBA_CCRAM_SIZES 
-    0K 0K
+    0K 0K 0K
 )
 
 stm32_util_create_family_targets(WBA)
@@ -37,6 +37,10 @@ function(stm32wba_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
 endfunction()
 
 set(STM32_WBA_DEVICES
+    WBA52CE
+    WBA52CG
+    WBA52KE
+    WBA52KG
     WBA54CE
     WBA54CG
     WBA54KE
