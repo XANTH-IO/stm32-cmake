@@ -1,22 +1,26 @@
 set(STM32_L1_TYPES 
-    L100xB  L100xBA L100xC  L151xB  L151xBA L151xC  L151xCA L151xD 
-    L151xDX L151xE  L152xB  L152xBA L152xC  L152xCA L152xD  L152xDX
-    L152xE  L162xC  L162xCA L162xD  L162xDX L162xE
+    L100xB L100xBA L100xC  
+    L151xB L151xBA L151xC L151xCA L151xD L151xDX L151xE  
+    L152xB L152xBA L152xC L152xCA L152xD L152xDX L152xE 
+                   L162xC L162xCA L162xD L162xDX L162xE
 )
 set(STM32_L1_TYPE_MATCH 
-    "L100.[68B]" "L100.[68B]-A" "L100.C"     "L151.[68B]"   "L151.[68B]-A" "L151.C"   "L151.C-A" "L151.D"
-    "L151.D-X"   "L151.E"       "L152.[68B]" "L152.[68B]-A" "L152.C"       "L152.C-A" "L152.D"   "L152.D-X"
-    "L152.E"     "L162.C"       "L162.C-A"   "L162.D"       "L162.D-X"     "L162.E"
+    "L100.[68B]" "L100.[68B]-A" "L100.C"
+    "L151.[68B]" "L151.[68B]-A" "L151.C" "L151.C-A" "L151.D" "L151.D-X" "L151.E"
+    "L152.[68B]" "L152.[68B]-A" "L152.C" "L152.C-A" "L152.D" "L152.D-X" "L152.E" 
+                                "L162.C" "L162.C-A" "L162.D" "L162.D-X" "L162.E"
 )
 set(STM32_L1_RAM_SIZES 
-     0K  0K 16K  0K  0K 32K 32K 48K
-    80K 80K  0K  0K 32K 32K 48K 80K
-    80K 32K 32K 48K 80K 80K
+     0K  0K 16K
+     0K  0K 32K 32K 48K 80K 80K
+     0K  0K 32K 32K 48K 80K 80K 
+            32K 32K 48K 80K 80K
 )
 set(STM32_L1_CCRAM_SIZES 
-     0K  0K  0K  0K  0K  0K  0K  0K
-     0K  0K  0K  0K  0K  0K  0K  0K
-     0K  0K  0K  0K  0K  0K
+     0K  0K  0K
+     0K  0K  0K  0K  0K  0K  0K
+     0K  0K  0K  0K  0K  0K  0K
+             0K  0K  0K  0K  0K
 )
 
 stm32_util_create_family_targets(L1)
