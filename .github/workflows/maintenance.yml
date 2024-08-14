@@ -60,19 +60,19 @@ jobs:
           if [[ -z ${cube} ]]; then
             cube="STMicroelectronics/STM32Cube${{ matrix.family }}"
           else
-            cube="$(echo ${cube} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+            cube="$(echo ${cube} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p')"
           fi
           cmsis=$(sed -nr "s/set\(CMSIS_${{ matrix.family }}_URL\s+(.*)\)/\1/p" ${family_src_file})
           if [[ -z ${cmsis} ]]; then
             cmsis="STMicroelectronics/cmsis_device_${family_l}"
           else
-            cmsis="$(echo ${cmsis} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+            cmsis="$(echo ${cmsis} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p')"
           fi
           hal=$(sed -nr "s/set\(HAL_${{ matrix.family }}_URL\s+(.*)\)/\1/p" ${family_src_file})
           if [[ -z ${hal} ]]; then
             hal="STMicroelectronics/stm32${family_l}xx_hal_driver"
           else
-            hal="$(echo ${hal} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p'"
+            hal="$(echo ${hal} | sed -rn 's@((https?://)?github\.com/)?(.*)@\3@p')"
           fi
           {
             echo "FAMILY_SRC_FILE=${family_src_file}"
