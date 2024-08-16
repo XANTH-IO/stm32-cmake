@@ -31,12 +31,12 @@ if(STM32H7 IN_LIST FreeRTOS_FIND_COMPONENTS)
     list(APPEND FreeRTOS_FIND_COMPONENTS STM32H7_M7 STM32H7_M4)
 endif()
 
-if(STM32WB IN_LIST BSP_FIND_COMPONENTS)
+if(STM32WB IN_LIST FreeRTOS_FIND_COMPONENTS)
     list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32WB)
     list(APPEND FreeRTOS_FIND_COMPONENTS STM32WB_M4)
 endif()
 
-if(STM32WL IN_LIST BSP_FIND_COMPONENTS)
+if(STM32WL IN_LIST FreeRTOS_FIND_COMPONENTS)
     list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32WL)
     list(APPEND FreeRTOS_FIND_COMPONENTS STM32WL_M4 STM32WL_M0PLUS)
 endif()
@@ -44,14 +44,15 @@ endif()
 # This section fills the family and ports components list
 foreach(COMP ${FreeRTOS_FIND_COMPONENTS})
     string(TOUPPER ${COMP} COMP)
+    unset(F)
     stm32_extract_info(${COMP} FAMILY F)
-    # Valid family component, so add it (e.g. STM32H7)
     if(F)
-        list(APPEND FreeRTOS_FIND_COMPONENTS_FAMILIES "STM32${F}")
-        continue()
+        # Valid family component, so add it (e.g. STM32H7
+        list(APPEND FreeRTOS_FIND_COMPONENTS_FAMILIES ${COMP})
+    else()
+        # Was not a family component, so add it to the port list
+        list(APPEND FreeRTOS_FIND_COMPONENTS_PORTS ${COMP})
     endif()
-    # Was not a family component, so add it to the port list
-    list(APPEND FreeRTOS_FIND_COMPONENTS_PORTS ${COMP})
 endforeach()
 
 if(NOT FreeRTOS_FIND_COMPONENTS_PORTS)
@@ -213,7 +214,7 @@ else()
             message(FATAL_ERROR "Unknown FreeRTOS component: ${COMP}")
         endif()
         
-        set(FAMILY F)
+        set(FAMILY ${F})
 
         if(NOT STM_DEVICES)
             stm32_get_devices_by_family(STM_DEVICES FAMILY ${FAMILY})
