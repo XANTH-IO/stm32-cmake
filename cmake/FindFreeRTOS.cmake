@@ -161,7 +161,7 @@ macro(stm32_find_freertos FreeRTOS_NAMESPACE FREERTOS_PATH)
             target_link_libraries(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE FreeRTOS)
             target_sources(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_SOURCE}")
             target_include_directories(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_PATH}")
-            message(trace "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE}")
+            message(TRACE "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE}")
             
             # armv8-m needs additional file even if using "No Trust Zone" port
             if(${PORT} IN_LIST FreeRTOS_armv8_PORTS)
@@ -176,7 +176,7 @@ macro(stm32_find_freertos FreeRTOS_NAMESPACE FREERTOS_PATH)
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_context_port.c"
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_heap.c"
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_init.c")
-                message(trace "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}::SECURE")
+                message(TRACE "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}::SECURE")
 
                 # non-secure part needs declaratation from secure includes
                 target_include_directories(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_PATH}/../secure")

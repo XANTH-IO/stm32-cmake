@@ -130,7 +130,7 @@ jobs:
     - name: Configure tests/freertos
       shell: bash
       working-directory: ${{ runner.workspace }}/tests/freertos/build
-      run: cmake -DTEST_FAMILIES=${{ matrix.family }} -DFETCH_ST_SOURCES=TRUE $GITHUB_WORKSPACE/tests/freertos/
+      run: cmake -DFAMILY=${{ matrix.family }} -DFETCH_ST_SOURCES=TRUE $GITHUB_WORKSPACE/tests/freertos/
 
     - name: Build tests/freertos
       working-directory: ${{ runner.workspace }}/tests/freertos/build
