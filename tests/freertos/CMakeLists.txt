@@ -20,11 +20,13 @@ else()
     set(FREERTOS_PORTS ${STM32${FAMILY}_FREERTOS_PORT})
 endif()
 
-stm32_fetch_cube(${FAMILY})
+if(FETCH_ST_SOURCES)
+    stm32_fetch_cube(${FAMILY})
+endif()
 
 find_package(CMSIS COMPONENTS STM32${FAMILY} REQUIRED)
 find_package(HAL COMPONENTS STM32${FAMILY} REQUIRED)
-find_package(FreeRTOS COMPONENTS STM32${FAMILY} ${FREERTOS_PORTS} REQUIRED)
+find_package(FreeRTOS COMPONENTS ${FREERTOS_PORTS} STM32${FAMILY} REQUIRED)
 
 set(SOURCES main.c)
 
@@ -35,9 +37,9 @@ if(CORES)
                 ${SOURCES}
             )
             target_link_libraries(freertos-test-${FAMILY}-${CORE}
-                ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::${CORE}::Timers
-                ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::${CORE}::Heap::4
-                ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::${CORE}::STM32${FAMILY}_${CORE}_FREERTOS_PORT
+                FreeRTOS::STM32::${FAMILY}::${CORE}::Timers
+                FreeRTOS::STM32::${FAMILY}::${CORE}::Heap::4
+                FreeRTOS::STM32::${FAMILY}::${CORE}::${STM32${FAMILY}_${CORE}_FREERTOS_PORT}
                 HAL::STM32::${FAMILY}::${CORE}::CORTEX
                 CMSIS::STM32::${DEVICE}::${CORE}
                 STM32::NoSys
@@ -45,12 +47,12 @@ if(CORES)
         endif()
     endforeach()
 else()
-    if(${FREERTOS_NAMESPACE}::STM32::${FAMILY}::STM32${FAMILY}_FREERTOS_PORT)
+    if(STM32${FAMILY}_FREERTOS_PORT)
         add_executable(freertos-test-${FAMILY} ${SOURCES})
         target_link_libraries(freertos-test-${FAMILY}
-            ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::Timers
-            ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::Heap::4
-            ${FREERTOS_NAMESPACE}::STM32::${FAMILY}::STM32${FAMILY}_FREERTOS_PORT
+            FreeRTOS::STM32::${FAMILY}::Timers
+            FreeRTOS::STM32::${FAMILY}::Heap::4
+            FreeRTOS::STM32::${FAMILY}::${STM32${FAMILY}_FREERTOS_PORT}
             HAL::STM32::${FAMILY}${CORE}::CORTEX
             CMSIS::STM32::${DEVICE}${CORE}
             STM32::NoSys
