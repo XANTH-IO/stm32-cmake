@@ -11,8 +11,6 @@ static void task(void *arg)
 
 int main(void)
 {
-    SystemInit();
-    blinky::init();
     
     xTaskCreate(task, "blinky", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
     

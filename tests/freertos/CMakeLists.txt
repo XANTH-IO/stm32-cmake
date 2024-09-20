@@ -30,32 +30,56 @@ find_package(FreeRTOS COMPONENTS ${FREERTOS_PORTS} STM32${FAMILY} REQUIRED)
 
 set(SOURCES main.c)
 
-if(CORES)
-    foreach(CORE ${CORES})
-        if(STM32${FAMILY}_${CORE}_FREERTOS_PORT)
-            add_executable(freertos-test-${FAMILY}-${CORE} 
-                ${SOURCES}
-            )
-            target_link_libraries(freertos-test-${FAMILY}-${CORE}
-                FreeRTOS::STM32::${FAMILY}::${CORE}::Timers
-                FreeRTOS::STM32::${FAMILY}::${CORE}::Heap::4
-                FreeRTOS::STM32::${FAMILY}::${CORE}::${STM32${FAMILY}_${CORE}_FREERTOS_PORT}
-                HAL::STM32::${FAMILY}::${CORE}::CORTEX
-                CMSIS::STM32::${DEVICE}::${CORE}
-                STM32::NoSys
-            )
-        endif()
-    endforeach()
-else()
-    if(STM32${FAMILY}_FREERTOS_PORT)
-        add_executable(freertos-test-${FAMILY} ${SOURCES})
-        target_link_libraries(freertos-test-${FAMILY}
-            FreeRTOS::STM32::${FAMILY}::Timers
-            FreeRTOS::STM32::${FAMILY}::Heap::4
-            FreeRTOS::STM32::${FAMILY}::${STM32${FAMILY}_FREERTOS_PORT}
-            HAL::STM32::${FAMILY}${CORE}::CORTEX
-            CMSIS::STM32::${DEVICE}${CORE}
-            STM32::NoSys
-        )
-    endif()
+set(VARIANTS "#" "SECURE" "NON_SECURE")
+
+if(NOT CORES)
+    message(TRACE "Single Core")
+    set(CORES "#")
 endif()
+
+foreach(CORE ${CORES})
+    if(CORE STREQUAL "#")
+        unset(CORE)
+        unset(CORE_C)
+        unset(CORE_U)
+        unset(CORE_D)
+    else()
+        set(CORE_C "::${CORE}")
+        set(CORE_U "_${CORE}")
+        set(CORE_D "-${CORE}")
+    endif()
+
+    foreach(PORT ${STM32${FAMILY}${CORE_U}_FREERTOS_PORT})
+        foreach(VARIANT ${VARIANTS})
+
+            message(TRACE "Iterrating ${FAMILY} ${CORE} ${PORT} ${VARIANT}")
+            if(VARIANT STREQUAL "#")
+                unset(VARIANT_C)
+                unset(VARIANT_D)
+            else()
+                set(VARIANT_C "::${VARIANT}")
+                string(TOLOWER "-${VARIANT}" VARIANT_D)
+            endif()
+            
+            set(EXE freertos-test-${FAMILY}${CORE_U}-${PORT}${VARIANT_D})
+            set(LIB FreeRTOS::STM32::${FAMILY}${CORE_C}::${PORT}${VARIANT_C})
+
+            if(TARGET ${LIB})
+                message(STATUS "Create executable ${EXE} with lib ${LIB}")
+                add_executable(${EXE}
+                    ${SOURCES}
+                )
+                target_link_libraries(${EXE}
+                    FreeRTOS::STM32::${FAMILY}${CORE_C}::Timers
+                    FreeRTOS::STM32::${FAMILY}${CORE_C}::Heap::4
+                    ${LIB}
+                    HAL::STM32::${FAMILY}${CORE_C}::CORTEX
+                    CMSIS::STM32::${DEVICE}${CORE_C}
+                    STM32::NoSys
+                )
+            else()
+                message(TRACE "Not creating ${EXE} becaue ${LIB} dosen't exist")
+            endif()
+        endforeach()
+    endforeach()
+endforeach()
