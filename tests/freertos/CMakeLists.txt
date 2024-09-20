@@ -18,6 +18,7 @@ if(CORES)
     endforeach()
 else()
     set(FREERTOS_PORTS ${STM32${FAMILY}_FREERTOS_PORT})
+    set(CORES "#")
 endif()
 
 if(FETCH_ST_SOURCES)
@@ -31,11 +32,6 @@ find_package(FreeRTOS COMPONENTS ${FREERTOS_PORTS} STM32${FAMILY} REQUIRED)
 set(SOURCES main.c)
 
 set(VARIANTS "#" "SECURE" "NON_SECURE")
-
-if(NOT CORES)
-    message(TRACE "Single Core")
-    set(CORES "#")
-endif()
 
 foreach(CORE ${CORES})
     if(CORE STREQUAL "#")
@@ -82,7 +78,7 @@ foreach(CORE ${CORES})
                     USE_HAL_DRIVER
                 )
             else()
-                message(TRACE "Not creating ${EXE} becaue ${LIB} dosen't exist")
+                message(TRACE "Not creating ${EXE} because ${LIB} dosen't exist")
             endif()
         endforeach()
     endforeach()

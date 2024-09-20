@@ -146,7 +146,7 @@ jobs:
       shell: bash
       working-directory: ${{ runner.workspace }}/tests/freertos/build
       run: |
-        TEMPLATES=($(find _deps -name "*_template.h"))
+        TEMPLATES=($(find _deps/*/Drivers/STM32${{ matrix.family }}*_HAL_Driver/Inc -name "*_template.h"))
         for template in ${TEMPLATES[@]}; do
           #get rid off "_template" in file name
           DEST=$(basename ${template} | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
