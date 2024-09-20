@@ -26,6 +26,7 @@ if(NOT FREERTOS_PATH)
     endif()
 endif()
 
+# TODO
 if(STM32H7 IN_LIST FreeRTOS_FIND_COMPONENTS)
     list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32H7)
     list(APPEND FreeRTOS_FIND_COMPONENTS STM32H7_M7 STM32H7_M4)
@@ -45,13 +46,16 @@ endif()
 foreach(COMP ${FreeRTOS_FIND_COMPONENTS})
     string(TOUPPER ${COMP} COMP)
     unset(F)
+    message(STATUS "Component ${COMP} is parsed")
     stm32_extract_info(${COMP} FAMILY F)
     if(F)
-        # Valid family component, so add it (e.g. STM32H7
+        # Valid family component, so add it (e.g. STM32H7)
         list(APPEND FreeRTOS_FIND_COMPONENTS_FAMILIES ${COMP})
+        message(STATUS "Component ${COMP} is family ${F}")
     else()
         # Was not a family component, so add it to the port list
         list(APPEND FreeRTOS_FIND_COMPONENTS_PORTS ${COMP})
+        message(STATUS "Component ${COMP} is a port")
     endif()
 endforeach()
 
