@@ -127,12 +127,22 @@ jobs:
     - name: Create build directory for tests/freertos
       run: cmake -E make_directory ${{ runner.workspace }}/tests/freertos/build
 
+    - name: Check is Family has FreeRTOS Port
+      id: check_freertos_port
+      run: |
+        has_port=$(sed -nr "s@set\(STM32${{ matrix.family }}(_\w+)?_FREERTOS_PORT\s+(.*)\)@Found@p" cmake/stm32/*)
+        if [[ -n ${has_port} ]]; then
+          echo "FOUND=TRUE" >> $GITHUB_OUTPUT
+        fi
+
     - name: Configure tests/freertos
+      if: ${{ steps.check_freertos_port.outputs.FOUND }}
       shell: bash
       working-directory: ${{ runner.workspace }}/tests/freertos/build
       run: cmake -DFAMILY=${{ matrix.family }} -DFETCH_ST_SOURCES=TRUE $GITHUB_WORKSPACE/tests/freertos/
     
     - name: Create HAL config files from templates
+      if: ${{ steps.check_freertos_port.outputs.FOUND && matrix.family != 'MP2' }}
       shell: bash
       working-directory: ${{ runner.workspace }}/tests/freertos/build
       run: |
@@ -142,9 +152,9 @@ jobs:
           DEST=$(basename ${template} | sed -rn "s@([^/]*)(_template)(\.h)@\1\3@p")
           cp ${template} ${DEST}
         done
-      if: ${{ matrix.family != 'MP2'}} 
   
     - name: Build tests/freertos
+      if: ${{ steps.check_freertos_port.outputs.FOUND }}
       working-directory: ${{ runner.workspace }}/tests/freertos/build
       shell: bash
       run: cmake --build . --config $BUILD_TYPE

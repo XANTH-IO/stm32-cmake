@@ -77,6 +77,10 @@ foreach(CORE ${CORES})
                     CMSIS::STM32::${DEVICE}${CORE_C}
                     STM32::NoSys
                 )
+                target_compile_definitions(${EXE} PRIVATE
+                    STM32${FAMILY}
+                    USE_HAL_DRIVER
+                )
             else()
                 message(TRACE "Not creating ${EXE} becaue ${LIB} dosen't exist")
             endif()
