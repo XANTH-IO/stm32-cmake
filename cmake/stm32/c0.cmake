@@ -1,16 +1,20 @@
 set(STM32_C0_TYPES 
     C011xx
     C031xx
+    C071xx
 )
 set(STM32_C0_TYPE_MATCH 
     "C011.[46]"
     "C031.[46]"
+    "C071.[8B]"
 )
 set(STM32_C0_RAM_SIZES 
      6K
     12K
+    24K
 )
 set(STM32_C0_CCRAM_SIZES 
+     0K
      0K
      0K
 )
@@ -38,6 +42,16 @@ set(STM32_C0_DEVICES
     C031G6
     C031K4
     C031K6
+    C071C8
+    C071CB
+    C071F8
+    C071FB
+    C071G8
+    C071GB
+    C071K8
+    C071KB
+    C071R8
+    C071RB
 )
 list(APPEND STM32_ALL_DEVICES STM32_C0_DEVICES)
 
