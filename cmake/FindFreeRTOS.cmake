@@ -26,32 +26,27 @@ if(NOT FREERTOS_PATH)
     endif()
 endif()
 
-if(STM32H7 IN_LIST FreeRTOS_FIND_COMPONENTS)
-    list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32H7)
-    list(APPEND FreeRTOS_FIND_COMPONENTS STM32H7_M7 STM32H7_M4)
-endif()
-
-if(STM32WB IN_LIST BSP_FIND_COMPONENTS)
-    list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32WB)
-    list(APPEND FreeRTOS_FIND_COMPONENTS STM32WB_M4)
-endif()
-
-if(STM32WL IN_LIST BSP_FIND_COMPONENTS)
-    list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS STM32WL)
-    list(APPEND FreeRTOS_FIND_COMPONENTS STM32WL_M4 STM32WL_M0PLUS)
-endif()
+foreach(FAMILY ${STM32_SUPPORTED_FAMILIES_SHORT_NAME})
+    if(DEFINED STM32${FAMILY}_FIND_REMOVE_ITEM)
+        if(${STM32${FAMILY}_FIND_REMOVE_ITEM} IN_LIST FreeRTOS_FIND_COMPONENTS)
+            list(REMOVE_ITEM FreeRTOS_FIND_COMPONENTS ${STM32${FAMILY}_FIND_REMOVE_ITEM})
+            list(APPEND FreeRTOS_FIND_COMPONENTS ${STM32${FAMILY}_FIND_APPENDS})
+        endif()
+    endif()
+endforeach()
 
 # This section fills the family and ports components list
 foreach(COMP ${FreeRTOS_FIND_COMPONENTS})
     string(TOUPPER ${COMP} COMP)
+    unset(F)
     stm32_extract_info(${COMP} FAMILY F)
-    # Valid family component, so add it (e.g. STM32H7)
     if(F)
-        list(APPEND FreeRTOS_FIND_COMPONENTS_FAMILIES "STM32${F}")
-        continue()
+        # Valid family component, so add it (e.g. STM32H7)
+        list(APPEND FreeRTOS_FIND_COMPONENTS_FAMILIES ${COMP})
+    else()
+        # Was not a family component, so add it to the port list
+        list(APPEND FreeRTOS_FIND_COMPONENTS_PORTS ${COMP})
     endif()
-    # Was not a family component, so add it to the port list
-    list(APPEND FreeRTOS_FIND_COMPONENTS_PORTS ${COMP})
 endforeach()
 
 if(NOT FreeRTOS_FIND_COMPONENTS_PORTS)
@@ -160,7 +155,7 @@ macro(stm32_find_freertos FreeRTOS_NAMESPACE FREERTOS_PATH)
             target_link_libraries(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE FreeRTOS)
             target_sources(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_SOURCE}")
             target_include_directories(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_PATH}")
-            message(trace "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE}")
+            message(TRACE "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE}")
             
             # armv8-m needs additional file even if using "No Trust Zone" port
             if(${PORT} IN_LIST FreeRTOS_armv8_PORTS)
@@ -175,7 +170,7 @@ macro(stm32_find_freertos FreeRTOS_NAMESPACE FREERTOS_PATH)
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_context_port.c"
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_heap.c"
                                                                                 "${FreeRTOS_${PORT}_PATH}/../secure/secure_init.c")
-                message(trace "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}::SECURE")
+                message(TRACE "FindFreeRTOS: creating target ${FreeRTOS_NAMESPACE}::${PORT}::SECURE")
 
                 # non-secure part needs declaratation from secure includes
                 target_include_directories(${FreeRTOS_NAMESPACE}::${PORT}${ARMv8_NON_SECURE} INTERFACE "${FreeRTOS_${PORT}_PATH}/../secure")
@@ -213,7 +208,7 @@ else()
             message(FATAL_ERROR "Unknown FreeRTOS component: ${COMP}")
         endif()
         
-        set(FAMILY F)
+        set(FAMILY ${F})
 
         if(NOT STM_DEVICES)
             stm32_get_devices_by_family(STM_DEVICES FAMILY ${FAMILY})
