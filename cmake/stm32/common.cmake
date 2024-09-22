@@ -1,6 +1,6 @@
 function(stm32_extract_info identifier)
     set(ARG_OPTIONS "")
-    set(ARG_SINGLE FAMILY DEVICE FLASH_CODE CORE)
+    set(ARG_SINGLE FAMILY SUBFAMILY DEVICE FLASH_CODE CORE)
     set(ARG_MULTIPLE "")
     cmake_parse_arguments(PARSE_ARGV 1 INFO "${ARG_OPTIONS}" "${ARG_SINGLE}" "${ARG_MULTIPLE}")
 
@@ -27,6 +27,9 @@ function(stm32_extract_info identifier)
 
     if (INFO_FAMILY AND FAMILY)
         set(${INFO_FAMILY} ${FAMILY} PARENT_SCOPE)
+    endif()
+    if (INFO_SUBFAMILY AND SUB_FAMILY)
+        set(${INFO_SUBFAMILY} ${SUB_FAMILY} PARENT_SCOPE)
     endif()
     if (INFO_DEVICE AND FAMILY AND SUB_FAMILY AND PIN_COUNT AND FLASH_SIZE)
         set(${INFO_DEVICE} ${FAMILY}${SUB_FAMILY}${PIN_COUNT}${FLASH_SIZE}${EXTENSION} PARENT_SCOPE)

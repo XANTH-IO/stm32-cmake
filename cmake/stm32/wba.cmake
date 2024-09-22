@@ -1,15 +1,19 @@
 set(STM32_WBA_TYPES
+    WBA50xx
     WBA52xx WBA54xx WBA55xx
 )
 
 set(STM32_WBA_TYPE_MATCH
+    "WBA50KG"
     "WBA52.[EG]" "WBA54.[EG]" "WBA55.[EG]"
 )
 
 set(STM32_WBA_RAM_SIZES 
+    0K
     0K 0K 0K
 )
 set(STM32_WBA_CCRAM_SIZES 
+    0K
     0K 0K 0K
 )
 
@@ -23,20 +27,25 @@ target_link_options(STM32::WBA INTERFACE
 )
 
 function(stm32wba_get_memory_info DEVICE TYPE FLASH_SIZE RAM_SIZE)
-    stm32_extract_info(${DEVICE} FLASH_CODE F)
+    stm32_extract_info(${DEVICE} SUBFAMILY SUB FLASH_CODE F)
 
-    if(F STREQUAL "E")
-        set(RAM "96K")
-    elseif(F STREQUAL "G")
-        set(RAM "128K")
+    if (SUB STREQUAL "50")
+        set(RAM "64K")
     else()
-        message(FATAL_ERROR "Unable to get RAM size for ${DEVICE}.")
+        if(F STREQUAL "E")
+            set(RAM "96K")
+        elseif(F STREQUAL "G")
+            set(RAM "128K")
+        else()
+            message(FATAL_ERROR "Unable to get RAM size for ${DEVICE}.")
+        endif()
     endif()
-
+    
     set(${RAM_SIZE} ${RAM} PARENT_SCOPE)
 endfunction()
 
 set(STM32_WBA_DEVICES
+    WBA50KG
     WBA52CE
     WBA52CG
     WBA52KE
