@@ -1,13 +1,9 @@
-# Note: Can't support STM32WL33 yet because cmsis doesn't provide startup
-
 set(STM32_WL_TYPES
-#    WL33xx WL33xx
     WL54xx WL55xx WL5Mxx
     WLE4xx WLE4xx WLE4xx WLE5xx WLE5xx WLE5xx
 )
 
 set(STM32_WL_TYPE_MATCH 
-#    "WL33.8" "WL33.[BC]"
     "WL54.." "WL55.." "WL5MOC"
     "WLE4.8" "WLE4.B" "WLE4.C" "WLE5.8" "WLE5.B" "WLE5.C"
 )
@@ -17,22 +13,31 @@ set(STM32_WL_TYPE_MATCH
 # there are 2 split sections of RAM and our default linker script only manages 
 # one section.
 set(STM32_WL_M4_RAM_SIZES 
-#     0K  0K
     32K 32K 32K
     10K 24K 64K 10K 24K 64K
 )
 
 # this is RAM size allocated to M0PLUS core
 set(STM32_WL_M0PLUS_RAM_SIZES 
-#    16K 32K
     32K 32K 32K
      0K  0K  0K  0K  0K  0K
 )
 
 set(STM32_WL_CCRAM_SIZES 
-    # 0K 0K
     0K 0K 0K
     0K 0K 0K 0K 0K 0K
+)
+
+set(STM32_WL3_TYPES
+   WL3xx WL3xx
+)
+
+set(STM32_WL3_TYPE_MATCH 
+    "WL33.8" "WL33.[BC]"
+)
+
+set(STM32_WL3_RAM_SIZES 
+    16K 32K
 )
 
 stm32_util_create_family_targets(WL M4)
@@ -50,6 +55,15 @@ target_compile_options(STM32::WL::M0PLUS INTERFACE
     -mcpu=cortex-m0plus -mfloat-abi=soft
 )
 target_link_options(STM32::WL::M0PLUS INTERFACE 
+    -mcpu=cortex-m0plus -mfloat-abi=soft
+)
+
+stm32_util_create_family_targets(WL3)
+
+target_compile_options(STM32::WL3 INTERFACE 
+    -mcpu=cortex-m0plus -mfloat-abi=soft
+)
+target_link_options(STM32::WL3 INTERFACE 
     -mcpu=cortex-m0plus -mfloat-abi=soft
 )
 
@@ -81,16 +95,6 @@ function(stm32wl_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORI
             set(${RAM_ORIGIN} 0x20008000 PARENT_SCOPE)
         else()
             message(FATAL_ERROR "Unknown core ${CORE}")
-        endif()
-    elseif(NOT (RAM_M0PLUS_VALUE EQUAL 0K) AND (RAM_M4_VALUE EQUAL 0K))
-        # single M0+ core (WL33)
-        set(${TWO_FLASH_BANKS} FALSE PARENT_SCOPE)
-        if(CORE STREQUAL "M0PLUS")
-            set(${RAM} ${RAM_M0PLUS_VALUE} PARENT_SCOPE)
-            set(${FLASH_ORIGIN} 0x10040000 PARENT_SCOPE)
-            set(${RAM_ORIGIN} 0x20000000 PARENT_SCOPE)
-        else()
-            message(FATAL_ERROR "Type ${TYPE} has no core ${CORE}")
         endif()
     elseif((RAM_M0PLUS_VALUE EQUAL 0K) AND NOT (RAM_M4_VALUE EQUAL 0K))
         # single M4 core (WLEX)
@@ -137,12 +141,6 @@ set(STM32WL_FIND_REMOVE_ITEM STM32WL)
 set(STM32WL_FIND_APPENDS STM32WL_M4 STM32WL_M0PLUS)
 
 set(STM32_WL_DEVICES
-    # WL33C8
-    # WL33CB
-    # WL33CC
-    # WL33K8
-    # WL33KB
-    # WL33KC
     WL54CC
     WL54JC
     WL55CC
@@ -163,18 +161,37 @@ set(STM32_WL_DEVICES
 )
 list(APPEND STM32_ALL_DEVICES STM32_WL_DEVICES)
 
+set(STM32_WL3_DEVICES
+    WL33C8
+    WL33CB
+    WL33CC
+    WL33K8
+    WL33KB
+    WL33KC
+)
+
+list(APPEND STM32_ALL_DEVICES STM32_WL3_DEVICES)
+
 list(APPEND STM32_SUPPORTED_FAMILIES_LONG_NAME
     STM32WL_M0PLUS
     STM32WL_M4
 )
 
-list(APPEND STM32_FETCH_FAMILIES WL)
+list(APPEND STM32_FETCH_FAMILIES WL WL3)
 
 set(STM32WL_M4_FREERTOS_PORT ARM_CM3)
 set(STM32WL_M0_FREERTOS_PORT ARM_CM0)
+set(STM32WL3_FREERTOS_PORT ARM_CM0)
+
+set(CMSIS_WL3_URL https://github.com/STMicroelectronics/cmsis-device-wl3)
+set(HAL_WL3_URL https://github.com/STMicroelectronics/stm32wl3x-hal-driver)
 
 # SERIE SS2026
 
 set(CUBE_WL_VERSION  v1.3.0)
 set(CMSIS_WL_VERSION v1.2.0)
 set(HAL_WL_VERSION   v1.3.0)
+
+set(CUBE_WL3_VERSION  v1.0.0)
+set(CMSIS_WL3_VERSION v1.0.0)
+set(HAL_WL3_VERSION   v1.0.0)
