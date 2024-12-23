@@ -29,11 +29,15 @@ set(STM32_WL_CCRAM_SIZES
 )
 
 set(STM32_WL3_TYPES
-   WL3xx
+   WL3xx WL3xx
 )
 
 set(STM32_WL3_TYPE_MATCH 
-    "WL33.."
+    "WL33.8" "WL33.[BC]"
+)
+
+set(STM32_WL3_RAM_SIZES 
+    16K 32K
 )
 
 stm32_util_create_family_targets(WL M4)
@@ -63,12 +67,6 @@ target_link_options(STM32::WL3 INTERFACE
     -mcpu=cortex-m0plus -mfloat-abi=soft
 )
 
-function(stm32wl_get_actual_family DEVICE FAMILY)
-    if(${DEVICE} MATCHES ${STM32_WL3_TYPE_MATCH})
-        set(FAMILY WL3 PARENT_SCOPE)
-    endif()
-endfunction()
-
 function(stm32wl_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORIGIN TWO_FLASH_BANKS)
     list(FIND STM32_WL_TYPES ${TYPE} TYPE_INDEX)
     set(INDEX 0)
@@ -79,46 +77,38 @@ function(stm32wl_get_memory_info DEVICE TYPE CORE FLASH FLASH_ORIGIN RAM RAM_ORI
         endif()
         math(EXPR INDEX "${INDEX}+1")
     endforeach()
-
-    if(${FOUND})
-        # WL device
-        list(GET STM32_WL_M0PLUS_RAM_SIZES ${M_INDEX} RAM_M0PLUS_VALUE)
-        list(GET STM32_WL_M4_RAM_SIZES ${M_INDEX} RAM_M4_VALUE)
-        if(NOT (RAM_M0PLUS_VALUE EQUAL 0K) AND NOT (RAM_M4_VALUE EQUAL 0K))
-            # dual core (WL5X)
-            set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)
-            if(CORE STREQUAL "M4")
-                set(${RAM} ${RAM_M4_VALUE} PARENT_SCOPE)
-                set(${FLASH_ORIGIN} 0x08000000 PARENT_SCOPE)
-                set(${RAM_ORIGIN} 0x20000000 PARENT_SCOPE)            
-            elseif(CORE STREQUAL "M0PLUS")
-                set(${RAM} ${RAM_M0PLUS_VALUE} PARENT_SCOPE)
-                set(${FLASH_ORIGIN} 0x08020000 PARENT_SCOPE)
-                set(${RAM_ORIGIN} 0x20008000 PARENT_SCOPE)
-            else()
-                message(FATAL_ERROR "Unknown core ${CORE}")
-            endif()
-        elseif((RAM_M0PLUS_VALUE EQUAL 0K) AND NOT (RAM_M4_VALUE EQUAL 0K))
-            # single M4 core (WLEX)
-            set(${TWO_FLASH_BANKS} FALSE PARENT_SCOPE)
-            if(CORE STREQUAL "M4")
-                set(${RAM} ${RAM_M4_VALUE} PARENT_SCOPE)
-                set(${FLASH_ORIGIN} 0x08000000 PARENT_SCOPE)
-                set(${RAM_ORIGIN} 0x20000000 PARENT_SCOPE)
-            else()
-                message(FATAL_ERROR "Type ${TYPE} has no core ${CORE}")
-            endif()
+    if(NOT ${FOUND})
+        message(FATAL_ERROR "Unsupported device ${DEVICE}")
+    endif()
+    list(GET STM32_WL_M0PLUS_RAM_SIZES ${M_INDEX} RAM_M0PLUS_VALUE)
+    list(GET STM32_WL_M4_RAM_SIZES ${M_INDEX} RAM_M4_VALUE)
+    if(NOT (RAM_M0PLUS_VALUE EQUAL 0K) AND NOT (RAM_M4_VALUE EQUAL 0K))
+        # dual core (WL5X)
+        set(${TWO_FLASH_BANKS} TRUE PARENT_SCOPE)
+        if(CORE STREQUAL "M4")
+            set(${RAM} ${RAM_M4_VALUE} PARENT_SCOPE)
+            set(${FLASH_ORIGIN} 0x08000000 PARENT_SCOPE)
+            set(${RAM_ORIGIN} 0x20000000 PARENT_SCOPE)            
+        elseif(CORE STREQUAL "M0PLUS")
+            set(${RAM} ${RAM_M0PLUS_VALUE} PARENT_SCOPE)
+            set(${FLASH_ORIGIN} 0x08020000 PARENT_SCOPE)
+            set(${RAM_ORIGIN} 0x20008000 PARENT_SCOPE)
         else()
             message(FATAL_ERROR "Unknown core ${CORE}")
         endif()
-    elseif(${DEVICE} MATCHES ${STM32_WL3_TYPE_MATCH})
-        # WL33 device
+    elseif((RAM_M0PLUS_VALUE EQUAL 0K) AND NOT (RAM_M4_VALUE EQUAL 0K))
+        # single M4 core (WLEX)
         set(${TWO_FLASH_BANKS} FALSE PARENT_SCOPE)
-        set(${FLASH_ORIGIN} 0x10040000 PARENT_SCOPE)
+        if(CORE STREQUAL "M4")
+            set(${RAM} ${RAM_M4_VALUE} PARENT_SCOPE)
+            set(${FLASH_ORIGIN} 0x08000000 PARENT_SCOPE)
+            set(${RAM_ORIGIN} 0x20000000 PARENT_SCOPE)
+        else()
+            message(FATAL_ERROR "Type ${TYPE} has no core ${CORE}")
+        endif()
     else()
-        message(FATAL_ERROR "Unsupported device ${DEVICE}")
+        message(FATAL_ERROR "Unknown core ${CORE}")
     endif()
-    
 endfunction()
 
 function(stm32wl_get_device_cores CORES)
@@ -129,14 +119,14 @@ function(stm32wl_get_device_cores CORES)
 
     if(NOT ARG_DEVICE)
         set(CORE_LIST M4 M0PLUS)
-    elseif(${DEVICE} MATCHES ${STM32_WL3_TYPE_MATCH})
-    set(CORE_LIST M0PLUS)
     else()
         stm32_get_chip_type(WL ${ARG_DEVICE} TYPE)
         list(FIND STM32_WL_TYPES ${TYPE} TYPE_INDEX)
         list(GET STM32_WL_M0PLUS_RAM_SIZES ${TYPE_INDEX} RAM_M0PLUS_VALUE)
         list(GET STM32_WL_M4_RAM_SIZES ${TYPE_INDEX} RAM_M4_VALUE)
-        if (RAM_M0PLUS_VALUE EQUAL 0K)
+        if(RAM_M4_VALUE EQUAL 0K)
+            set(CORE_LIST M0PLUS)
+        elseif (RAM_M0PLUS_VALUE EQUAL 0K)
             set(CORE_LIST M4)
         else()
             set(CORE_LIST M4 M0PLUS)
@@ -193,7 +183,7 @@ set(STM32WL_M4_FREERTOS_PORT ARM_CM3)
 set(STM32WL_M0_FREERTOS_PORT ARM_CM0)
 set(STM32WL3_FREERTOS_PORT ARM_CM0)
 
-set(CMSIS_WL3_URL https://github.com/STMicroelectronics/cmsis-device-wl)
+set(CMSIS_WL3_URL https://github.com/STMicroelectronics/cmsis-device-wl3)
 
 # SERIE SS2026
 
