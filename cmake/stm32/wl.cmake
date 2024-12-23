@@ -184,6 +184,7 @@ set(STM32WL_M0_FREERTOS_PORT ARM_CM0)
 set(STM32WL3_FREERTOS_PORT ARM_CM0)
 
 set(CMSIS_WL3_URL https://github.com/STMicroelectronics/cmsis-device-wl3)
+set(HAL_WL3_URL https://github.com/STMicroelectronics/stm32wl3x-hal-driver)
 
 # SERIE SS2026
 
