@@ -193,6 +193,8 @@ set(STM32WL_M4_FREERTOS_PORT ARM_CM3)
 set(STM32WL_M0_FREERTOS_PORT ARM_CM0)
 set(STM32WL3_FREERTOS_PORT ARM_CM0)
 
+set(CMSIS_WL3_URL https://github.com/STMicroelectronics/cmsis-device-wl)
+
 # SERIE SS2026
 
 set(CUBE_WL_VERSION  v1.3.0)
