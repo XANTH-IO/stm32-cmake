@@ -191,7 +191,7 @@ jobs:
             if [ -n ${serie} ]; then
               echo "SERIE=$serie" >> $GITHUB_OUTPUT
             fi
-  
+
         - name: Retrieve Serie (Family) JSONs
           id: retrieve-jsons
           continue-on-error: true
@@ -205,7 +205,18 @@ jobs:
             for serie in ${SERIES[@]}; do
               URL=https://www.st.com/bin/st/selectors/cxst/en.cxst-ps-grid.html/${serie}.json
               echo "Retrieving ${URL}"
-              curl ${URL} --compressed -H 'User-Agent: Firefox/9000' -o .series/${serie}.json
+              curl ${URL} --compressed \
+                -H 'User-Agent: Firefox/9000' \
+                -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
+                -H 'Accept-Encoding: gzip, deflate, br, zstd' \
+                -H 'Connection: keep-alive' \
+                -H 'Upgrade-Insecure-Requests: 1' \
+                -H 'Sec-Fetch-Dest: document' \
+                -H 'Sec-Fetch-Mode: navigate' \
+                -H 'Sec-Fetch-Site: cross-site' \
+                -H 'Sec-GPC: 1' \
+                -H 'Priority: u=0, i' \
+                -o .series/${serie}.json
             done
 
         - name: Get existing devices list
