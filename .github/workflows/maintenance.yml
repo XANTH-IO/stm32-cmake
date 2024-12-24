@@ -192,6 +192,9 @@ jobs:
               echo "SERIE=$serie" >> $GITHUB_OUTPUT
             fi
   
+        - name: Display curl version
+          run: curl --version
+
         - name: Retrieve Serie (Family) JSONs
           id: retrieve-jsons
           continue-on-error: true
