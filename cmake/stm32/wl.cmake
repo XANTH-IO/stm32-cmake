@@ -188,7 +188,7 @@ set(HAL_WL3_URL https://github.com/STMicroelectronics/stm32wl3x-hal-driver)
 
 # SERIE SS2026
 
-set(CUBE_WL_VERSION  v1.3.0)
+set(CUBE_WL_VERSION  v1.3.1)
 set(CMSIS_WL_VERSION v1.2.0)
 set(HAL_WL_VERSION   v1.3.0)
 
