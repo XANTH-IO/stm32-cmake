@@ -4,7 +4,7 @@ function(stm32_extract_info identifier)
     set(ARG_MULTIPLE "")
     cmake_parse_arguments(PARSE_ARGV 1 INFO "${ARG_OPTIONS}" "${ARG_SINGLE}" "${ARG_MULTIPLE}")
 
-    string(REGEX MATCH "^(STM32)?([CFGHLU][0123457]|MP[12]|WL3?|WB[0A]?)([0-9A-Z][0-9M]?)?([A-Z135])?([3468ABCDEFGHIJYZ])?(-[AX])?_?(M0PLUS|M33|M4|M7)?.*$" ID ${identifier})
+    string(REGEX MATCH "^(STM32)?([CFGHLU][0123457]|MP[12]|N6|WL3?|WB[0A]?)([0-9A-Z][0-9M]?)?([A-Z135])?([3468ABCDEFGHIJYZ])?(-[AX])?_?(M0PLUS|M33|M4|M7)?.*$" ID ${identifier})
     if(NOT ID)
         return()
     endif()
