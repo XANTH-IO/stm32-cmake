@@ -246,8 +246,6 @@ function(stm32_get_memory_info)
 
     stm32_extract_info(${INFO_DEVICE} FLASH_CODE SIZE_CODE)
 
-    message(TRACE "Flash Size ${SIZE_CODE}")
-
     if (SIZE_CODE STREQUAL "0")
         set(FLASH "0K")
     elseif(SIZE_CODE STREQUAL "3")

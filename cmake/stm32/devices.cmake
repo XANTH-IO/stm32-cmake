@@ -166,7 +166,7 @@ include(FetchContent)
 FetchContent_Declare(
     STM32-CMSIS
     GIT_REPOSITORY https://github.com/STMicroelectronics/cmsis_core/
-    GIT_TAG        v5.6.0
+    GIT_TAG        v5.9.0
     GIT_PROGRESS   TRUE
 )
 
