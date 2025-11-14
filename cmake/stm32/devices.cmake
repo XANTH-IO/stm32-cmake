@@ -66,6 +66,7 @@ include(stm32/wba)
 include(stm32/wl)
 include(stm32/mp1)
 include(stm32/mp2)
+include(stm32/n6)
 
 # Store a list of devices into a given STM_DEVICES list.
 # You can also specify multiple device families. Examples:
@@ -187,7 +188,7 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
         set(STM32_USE_CMSIS_FROM_CUBE_${FAMILY} ON)
     else()
         if(NOT CMSIS_${FAMILY}_URL)
-            set(CMSIS_${FAMILY}_URL https://github.com/STMicroelectronics/cmsis_device_${FAMILY_L}/)
+            set(CMSIS_${FAMILY}_URL https://github.com/STMicroelectronics/cmsis-device-${FAMILY_L}/)
         endif()
 
         FetchContent_Declare(
@@ -202,7 +203,7 @@ foreach(FAMILY ${STM32_FETCH_FAMILIES})
         set(STM32_USE_HAL_FROM_CUBE_${FAMILY} ON)
     else()
         if(NOT HAL_${FAMILY}_URL)
-            set(HAL_${FAMILY}_URL https://github.com/STMicroelectronics/stm32${FAMILY_L}xx_hal_driver/)
+            set(HAL_${FAMILY}_URL https://github.com/STMicroelectronics/stm32${FAMILY_L}xx-hal-driver/)
         endif()
 
         FetchContent_Declare(

@@ -198,7 +198,7 @@ foreach(COMP ${CMSIS_FIND_COMPONENTS_FAMILIES})
 
     # search for system, can be named system_stm32[XX]xx.c / system_stm32[XX]x.c / system_stm32[XX]xx_mY.c
     find_file(CMSIS_${FAMILY}${CORE_U}_SYSTEM
-        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c system_stm32${FAMILY_L}xx${CORE_u}.c
+        NAMES system_stm32${FAMILY_L}xx.c system_stm32${FAMILY_L}x.c system_stm32${FAMILY_L}xx${CORE_u}.c system_stm32${FAMILY_L}xx_ns.c
         PATHS "${CMSIS_${FAMILY}${CORE_U}_PATH}/Source/Templates"
         NO_DEFAULT_PATH
     )
