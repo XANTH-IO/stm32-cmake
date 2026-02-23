@@ -56,6 +56,6 @@ set(HAL_WB0_URL https://github.com/STMicroelectronics/stm32wb0x_hal_driver)
 
 # SERIE SS2337
 
-set(CUBE_WB0_VERSION  v1.3.0)
+set(CUBE_WB0_VERSION  v1.4.0)
 set(CMSIS_WB0_VERSION v1.0.0)
 set(HAL_WB0_VERSION   v1.0.0)
